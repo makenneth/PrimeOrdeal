@@ -58,17 +58,17 @@
 
 	var Game = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./game.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var View = function(ctx){
-		this.ctx = ctx;
-		this.game = new Game(20, ctx);
+	  this.ctx = ctx;
+	  this.game = new Game(20, ctx);
 	};
 
 	View.prototype.start = function() {
-		(function(that){
-			var intId = setInterval(function(){
-				that.game.move();
-				that.game.draw();
-			}, 20);
-		})(this);
+	  (function(that){
+	    var intId = setInterval(function(){
+	      that.game.move();
+	      that.game.draw();
+	    }, 20);
+	  })(this);
 	};
 
 
