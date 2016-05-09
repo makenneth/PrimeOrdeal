@@ -86,15 +86,19 @@
 	    return Array.from(Array(10));
 	  }); //subarrays are columns
 	  this.bubbles = [];
-	  this.primes= [2, 3, 5, 7, 9, 11, 13, 17, 19, 23, 29, 31, 33, 37];
+	  this.primes= [2, 3, 5, 7, 9,
+	                11, 13, 17, 19, 23, 
+	                29, 31, 33, 37, 41, 
+	                43, 47, 53, 59, 61, 
+	                67, 71];
 	  this.rowSums = Array.from(Array(8));
 	  this.colSums = Array.from(Array(10));
 	  this.timeElapsed = startTime - Date.now();
-	  this.addBubble();
-	  $(document).on("keydown", this.updatePosition);
+	  this.currentBubble = this.addBubble();
+	  $(document).on("keydown", this.updatePosition.bind(this));
 	};
 
-	Game.updatePosition = function(e){
+	Game.prototype.updatePosition = function(e){
 	  this.currentBubble.moveX(e.which);
 	};
 
@@ -103,18 +107,20 @@
 	      randomNum = Math.ceil(Math.random() * 6 + 1),
 	      xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
 	      newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
-	  this.currentBubble = newBubble;
 	  this.bubbles.push(newBubble);
+	  return newBubble;
 	};
 
 	Game.prototype.moveBubble = function(){
 	  var bubbleCol = this.currentBubble.col,
 	      currentCol = this.grid[this.currentBubble.col];
-
-	  if (this.currentBubble.pos_y >= (this.grid[this.currentBubble.col].length * 60 + 30 + 30)){ 
+	  numOfBubblesInCol = currentCol.reduce(function(a, b){
+	                                    return a + (!!b ? 1 : 0);
+	                                  }, 0);
+	  if (this.currentBubble.pos_y >= (750 - (numOfBubblesInCol * 60 + 30 + 30))){ 
 	    this.currentBubble.speed = 0;
-	    this.bubbles
-	    this.addBubble();
+	    this.grid[bubbleCol][numOfBubblesInCol] = this.currentBubble;
+	    this.currentBubble = this.addBubble();
 	  } else {
 	    this.currentBubble.fall();
 	  }
@@ -181,7 +187,7 @@
 	};
 
 	Bubble.prototype.moveX = function(keyCode){
-	  if (!autoFall){
+	  if (!this.autoFall){
 	    switch (keyCode){
 	      case 32: //space
 	        this.setAutoFall();

@@ -10,7 +10,7 @@ var Bubble = function(ctx, col, speed, value){
 };
 
 Bubble.prototype.moveX = function(keyCode){
-  if (!autoFall){
+  if (!this.autoFall){
     switch (keyCode){
       case 32: //space
         this.setAutoFall();
