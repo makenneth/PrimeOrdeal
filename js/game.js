@@ -1,5 +1,6 @@
+var Bubble = require('./bubble.js');
 var Game = function(ctx){
-  this.startTime = Date.now();
+  var startTime = Date.now();
   this.ctx = ctx;
   this.grid = Array.from(Array(8), function(spot){
     return Array.from(Array(10));
@@ -10,37 +11,46 @@ var Game = function(ctx){
   this.colSums = Array.from(Array(10));
   this.timeElapsed = startTime - Date.now();
   this.addBubble();
-  $("body").on("keydown", this.updatePosition);
+  $(document).on("keydown", this.updatePosition);
 };
 
 Game.updatePosition = function(e){
-  this.currentBubble.move(e.which);
+  this.currentBubble.moveX(e.which);
 };
 
 Game.prototype.addBubble = function(){
   var speed = this.timeElapsed / 30000 + 1,
       randomNum = Math.ceil(Math.random() * 6 + 1),
       xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
-      newBubble = new Bubble(this.ctx, [xPos, 0], speed, randomNum);
+      newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
   this.currentBubble = newBubble;
-  this.bubbles.push(newBubble)
+  this.bubbles.push(newBubble);
 };
+
 Game.prototype.moveBubble = function(){
-  if (this.currentBubble.pos_y >= (this.grid[bubble.col].length * 60 + 30 + 30)){ 
+  var bubbleCol = this.currentBubble.col,
+      currentCol = this.grid[this.currentBubble.col];
+
+  if (this.currentBubble.pos_y >= (this.grid[this.currentBubble.col].length * 60 + 30 + 30)){ 
     this.currentBubble.speed = 0;
+    this.bubbles
     this.addBubble();
   } else {
-    this.currentBubble.move();
+    this.currentBubble.fall();
   }
 };
 
 Game.prototype.draw = function(){
-  clearRect(0, 0, 560, 800);
+  this.ctx.clearRect(0, 0, 560, 800);
   this.bubbles.forEach(function(bubble){
       bubble.draw(); 
   });
-  clearPrime();
+  this.clearPrime();
 };
+Game.prototype.move = function(){
+  this.moveBubble();
+};
+
 Game.prototype.clearPrime = function(){
   for (var i = 0; i < this.rowSums; i++){
     if (this.primes.indexOf(this.rowSums[i]) > -1){
@@ -63,12 +73,14 @@ Game.prototype.shiftBubbles = function(){
 
 };
 Game.prototype.lost = function(){
-  if (this.grid.all(function(col){
-    return col.all(function(cell){ 
+  if (this.grid.every(function(col){
+    return col.every(function(cell){ 
       return !!cell;
     })
-  }){
+  })){
     return true;
   }
   return false;
 };
+
+module.exports = Game;

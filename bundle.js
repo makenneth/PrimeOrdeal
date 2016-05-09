@@ -56,10 +56,10 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Game = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./game.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var Game = __webpack_require__(2);
 	var View = function(ctx){
 	  this.ctx = ctx;
-	  this.game = new Game(20, ctx);
+	  this.game = new Game(ctx); //I could set difficulties, which takes in # of bubble to start with
 	};
 
 	View.prototype.start = function() {
@@ -73,6 +73,176 @@
 
 
 	module.exports = View;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Bubble = __webpack_require__(3);
+	var Game = function(ctx){
+	  var startTime = Date.now();
+	  this.ctx = ctx;
+	  this.grid = Array.from(Array(8), function(spot){
+	    return Array.from(Array(10));
+	  }); //subarrays are columns
+	  this.bubbles = [];
+	  this.primes= [2, 3, 5, 7, 9, 11, 13, 17, 19, 23, 29, 31, 33, 37];
+	  this.rowSums = Array.from(Array(8));
+	  this.colSums = Array.from(Array(10));
+	  this.timeElapsed = startTime - Date.now();
+	  this.addBubble();
+	  $(document).on("keydown", this.updatePosition);
+	};
+
+	Game.updatePosition = function(e){
+	  this.currentBubble.moveX(e.which);
+	};
+
+	Game.prototype.addBubble = function(){
+	  var speed = this.timeElapsed / 30000 + 1,
+	      randomNum = Math.ceil(Math.random() * 6 + 1),
+	      xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
+	      newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
+	  this.currentBubble = newBubble;
+	  this.bubbles.push(newBubble);
+	};
+
+	Game.prototype.moveBubble = function(){
+	  var bubbleCol = this.currentBubble.col,
+	      currentCol = this.grid[this.currentBubble.col];
+
+	  if (this.currentBubble.pos_y >= (this.grid[this.currentBubble.col].length * 60 + 30 + 30)){ 
+	    this.currentBubble.speed = 0;
+	    this.bubbles
+	    this.addBubble();
+	  } else {
+	    this.currentBubble.fall();
+	  }
+	};
+
+	Game.prototype.draw = function(){
+	  this.ctx.clearRect(0, 0, 560, 800);
+	  this.bubbles.forEach(function(bubble){
+	      bubble.draw(); 
+	  });
+	  this.clearPrime();
+	};
+	Game.prototype.move = function(){
+	  this.moveBubble();
+	};
+
+	Game.prototype.clearPrime = function(){
+	  for (var i = 0; i < this.rowSums; i++){
+	    if (this.primes.indexOf(this.rowSums[i]) > -1){
+	      for (var k = 0; k < this.grid.length; k++){
+	        this.grid[k][i] = undefined;
+	      }
+	    }
+	  }
+	  for (var j = 0; j < this.colSums; j++){
+	    if (this.primes.indexOf(this.colSums[j] > -1)){
+	      this.grid[j].map(function(cell){
+	        return undefined;
+	      });
+	    }
+	  }
+	  this.shiftBubbles();
+	};
+
+	Game.prototype.shiftBubbles = function(){
+
+	};
+	Game.prototype.lost = function(){
+	  if (this.grid.every(function(col){
+	    return col.every(function(cell){ 
+	      return !!cell;
+	    })
+	  })){
+	    return true;
+	  }
+	  return false;
+	};
+
+	module.exports = Game;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	var Bubble = function(ctx, col, speed, value){
+	  this.ctx = ctx;
+	  this.size = 30;
+	  this.pos_y = 0;
+	  this.col = col;
+	  this.speed = speed;
+	  this.value = value;
+	  this.color = Bubble.color(value);
+	  this.autoFall = false;
+	};
+
+	Bubble.prototype.moveX = function(keyCode){
+	  if (!autoFall){
+	    switch (keyCode){
+	      case 32: //space
+	        this.setAutoFall();
+	        break;
+	      case 37: //left arrow
+	        if (this.col >= 1){
+	          this.col--;
+	        }
+	        break;
+	      case 39: //right arrow
+	        if (this.col <= 6){
+	          this.col++;
+	        }
+	        break;
+	      case 40: //accelerate (down arrow)
+	        break;
+	    }  
+	  }
+	}
+	Bubble.color = function(value){
+	  switch(value){
+	    case 2:
+	      return "#009900";
+	      break;
+	    case 3:
+	      return "#000099";
+	      break;
+	    case 4:
+	      return "#994d00";
+	      break;
+	    case 5:
+	      return "#990000";
+	      break;
+	    case 6:
+	      return "#009999";
+	      break;
+	    case 7:
+	      return "#000000";
+	      break;
+	  }
+	};
+	Bubble.prototype.draw = function(){
+	  var pos_x = this.col * 60 + 40 + 30;
+	  this.ctx.fillStyle = this.color;
+	  this.ctx.beginPath();
+	  this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
+	  this.ctx.fill();
+	  this.ctx.font = "20px Arial";
+	  this.ctx.strokeStyle = "white";
+	  this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
+	};
+	Bubble.prototype.setAutoFall = function(){
+	  this.autoFall = true;
+	  this.speed = 10;
+	};
+
+	Bubble.prototype.fall = function(){
+	  this.pos_y += this.speed;
+	};
+
+	module.exports = Bubble;
 
 /***/ }
 /******/ ]);

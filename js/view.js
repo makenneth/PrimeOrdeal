@@ -1,7 +1,7 @@
 var Game = require('./game.js');
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(20, ctx);
+  this.game = new Game(ctx); //I could set difficulties, which takes in # of bubble to start with
 };
 
 View.prototype.start = function() {
