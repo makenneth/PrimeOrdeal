@@ -1,4 +1,4 @@
-var Bubble = function(ctx, col, speed, value){
+var Bubble = function(ctx, col, speed, value, autoFall, hidden){
   this.ctx = ctx;
   this.size = 30;
   this.pos_y = 0;
@@ -6,7 +6,8 @@ var Bubble = function(ctx, col, speed, value){
   this.speed = speed;
   this.value = value;
   this.color = Bubble.color(value);
-  this.autoFall = false;
+  this.autoFall = autoFall || false;
+  this.hidden = hidden || false;
 };
 
 Bubble.prototype.moveX = function(keyCode){
@@ -54,13 +55,15 @@ Bubble.color = function(value){
 };
 Bubble.prototype.draw = function(){
   var pos_x = this.col * 60 + 40 + 30;
-  this.ctx.fillStyle = this.color;
+  this.ctx.fillStyle = this.hidden ? "black" : this.color;
   this.ctx.beginPath();
   this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
   this.ctx.fill();
-  this.ctx.font = "20px Arial";
-  this.ctx.strokeStyle = "white";
-  this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
+  if (!this.hidden){
+    this.ctx.font = "20px Arial";
+    this.ctx.strokeStyle = "white";
+    this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
+  }
 };
 
 Bubble.prototype.setAutoFall = function(){
@@ -69,6 +72,8 @@ Bubble.prototype.setAutoFall = function(){
 };
 
 Bubble.prototype.fall = function(){
+  //add condition to move back up
+  //and measure height not with radius but with actual pos
   this.pos_y += this.speed;
 };
 
