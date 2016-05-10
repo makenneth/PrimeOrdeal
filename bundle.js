@@ -61,27 +61,74 @@
 	  this.ctx = ctx;
 	  this.game = new Game(ctx); //I could set difficulties, which takes in # of bubble to start with
 	  this.page = 1;
+	  document.addEventListener("click", this.findMousePos.bind(this));
+	  document.onmousemove = this.moveMouse.bind(this);
 	};
 
 	View.prototype.start = function() {
-	  (function(that){
 	    var intId = setInterval(function(){
-	      that.game.move();
-	      that.game.draw();
-	      that.hasWon(intId);
-	    }, 20);
-	  })(this);
+	    	switch (this.page){
+	    		case 1:
+	    			this.startScreen();
+	    			break;
+	    		case 2:
+	    			this.gameScreen.call(this, intId);
+	    			break;
+	    		case 3:
+	    			break;
+	    	}
+	    }.bind(this), 20);
+	};
+	View.prototype.moveMouse = function(event){
+			if (this.page === 1){
+			var x = event.pageX,
+					y = event.pageY;
+			if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
+				this.ctx.beginPath();
+				this.ctx.rect(114, 64, 93, 50);
+				this.ctx.stroke();
+			} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
+				this.ctx.beginPath();
+				this.ctx.rect(105, 110, 220, 55);
+				this.ctx.stroke();
+			}
+		}
+	};
+	View.prototype.findMousePos = function(event){
+		if (this.page === 1){
+			var x = event.pageX,
+					y = event.pageY;
+			if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
+				this.page = 2;
+			} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
+				this.page = 3;
+			}
+		}
+	};
+	View.prototype.gameScreen = function(intId){
+		  // this.game.move();
+	    this.game.draw();
+	    this.game.moveBubble();
+	    this.hasWon(intId);
 	};
 	View.prototype.startScreen = function(){
-		
+		this.ctx.clearRect(0, 0, 640, 800);
+		this.ctx.font = "64px Arial";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText("PrimeOrdeal", 140, 400);
+		this.ctx.font = "36px Arial";
+		this.ctx.fillText("Start", 120, 100);
+		this.ctx.font = "36px Arial";
+		this.ctx.fillText("Instructions", 120, 150);
+
 	}
 	View.prototype.hasWon = function(int) {
 		if (this.game.lost()){
 			clearInterval(int);
-			this.ctx.clearRect(0, 0, 560, 800);
+			this.ctx.clearRect(0, 0, 640, 800);
 		  this.ctx.font = "36px Arial";
 			this.ctx.fillStyle = "black";
-			this.ctx.fillText("YOU LOST!", 100, 100);
+			this.ctx.fillText("YOU LOST!", 140, 100);
 		}
 	};
 
@@ -104,10 +151,11 @@
 	                43, 47, 53, 59, 61, 
 	                67, 71];
 	  
-	  this.colSums = Array.from(Array(10), function(_){return 0;});
+	  this.colSums = Array.from(Array(8), function(_){return 0;});
 	  this.timeElapsed = 0;
 	  this.turns = 0; //every 7 turns, new balls will drop
 	  this.score = 0;
+	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
 	  setInterval(this.incrementTime.bind(this), 10)
@@ -122,7 +170,7 @@
 	};
 
 	Game.prototype.addBubble = function(){
-	  var speed = 1, //this.timeElapsed / 3000 + 
+	  var speed = this.timeElapsed / 3000 + 1,  
 	      randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7,
 	      xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
 	      newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
@@ -175,7 +223,31 @@
 
 
 	Game.prototype.draw = function(){
-	  this.ctx.clearRect(0, 0, 560, 800);
+	  this.ctx.clearRect(0, 0, 640, 800);
+	  this.ctx.font = "36px Arial";
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fillText("PrimeOrdeal", 40, 60);
+	  this.ctx.font = "24px Arial";
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fillText("Score", 24, 280);
+	  this.ctx.font = "24px Arial";
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fillText(this.score, 44, 320);
+	  this.ctx.font = "20px Arial";
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fillText("Turns Left", 14, 520);
+	  this.ctx.font = "24px Arial";
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fillText(7 -this.turns, 44, 560);
+	  this.ctx.beginPath();
+	  this.ctx.lineWidth = 4;
+	  this.ctx.moveTo(118, 80);
+	  this.ctx.lineTo(118, 722);
+	  this.ctx.lineTo(602, 722);
+	  this.ctx.lineTo(602, 80);
+	  this.ctx.strokeStyle = "black";
+	  this.ctx.stroke();
+	  this.ctx.lineWidth = 2;
 	  this.ctx.fillStyle = "black";
 	  if (this.turns === 7){
 	    this.turns = 0;
@@ -281,15 +353,15 @@
 	Bubble.prototype.moveX = function(keyCode){
 	  if (!this.autoFall){
 	    switch (keyCode){
-	      case 32: //space
+	      case 32: 
 	        this.setAutoFall();
 	        break;
-	      case 37: //left arrow
+	      case 37: 
 	        if (this.col >= 1){
 	          this.col--;
 	        }
 	        break;
-	      case 39: //right arrow
+	      case 39:
 	        if (this.col <= 6){
 	          this.col++;
 	        }
@@ -322,8 +394,8 @@
 	  }
 	};
 	Bubble.prototype.draw = function(){
-	  var pos_x = this.col * 60 + 40 + 30;
-	  this.ctx.fillStyle = this.hidden ? "black" : this.color;
+	  var pos_x = this.col * 60 + 120 + 30;
+	  this.ctx.fillStyle = this.hidden ? "#333" : this.color;
 	  this.ctx.beginPath();
 	  this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
 	  this.ctx.fill();

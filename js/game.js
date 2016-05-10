@@ -11,10 +11,11 @@ var Game = function(ctx){
                 43, 47, 53, 59, 61, 
                 67, 71];
   
-  this.colSums = Array.from(Array(10), function(_){return 0;});
+  this.colSums = Array.from(Array(8), function(_){return 0;});
   this.timeElapsed = 0;
   this.turns = 0; //every 7 turns, new balls will drop
   this.score = 0;
+  this.dropHiddenBubbles();
   this.currentBubble = this.addBubble();
   $(document).on("keydown", this.updatePosition.bind(this));
   setInterval(this.incrementTime.bind(this), 10)
@@ -29,7 +30,7 @@ Game.prototype.updatePosition = function(e){
 };
 
 Game.prototype.addBubble = function(){
-  var speed = 1, //this.timeElapsed / 3000 + 
+  var speed = this.timeElapsed / 3000 + 1,  
       randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7,
       xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
       newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
@@ -82,7 +83,31 @@ Game.prototype.dropHiddenBubbles = function(){
 
 
 Game.prototype.draw = function(){
-  this.ctx.clearRect(0, 0, 560, 800);
+  this.ctx.clearRect(0, 0, 640, 800);
+  this.ctx.font = "36px Arial";
+  this.ctx.fillStyle = "black";
+  this.ctx.fillText("PrimeOrdeal", 40, 60);
+  this.ctx.font = "24px Arial";
+  this.ctx.fillStyle = "black";
+  this.ctx.fillText("Score", 24, 280);
+  this.ctx.font = "24px Arial";
+  this.ctx.fillStyle = "black";
+  this.ctx.fillText(this.score, 44, 320);
+  this.ctx.font = "20px Arial";
+  this.ctx.fillStyle = "black";
+  this.ctx.fillText("Turns Left", 14, 520);
+  this.ctx.font = "24px Arial";
+  this.ctx.fillStyle = "black";
+  this.ctx.fillText(7 -this.turns, 44, 560);
+  this.ctx.beginPath();
+  this.ctx.lineWidth = 4;
+  this.ctx.moveTo(118, 80);
+  this.ctx.lineTo(118, 722);
+  this.ctx.lineTo(602, 722);
+  this.ctx.lineTo(602, 80);
+  this.ctx.strokeStyle = "black";
+  this.ctx.stroke();
+  this.ctx.lineWidth = 2;
   this.ctx.fillStyle = "black";
   if (this.turns === 7){
     this.turns = 0;

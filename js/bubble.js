@@ -13,15 +13,15 @@ var Bubble = function(ctx, col, speed, value, autoFall, hidden){
 Bubble.prototype.moveX = function(keyCode){
   if (!this.autoFall){
     switch (keyCode){
-      case 32: //space
+      case 32: 
         this.setAutoFall();
         break;
-      case 37: //left arrow
+      case 37: 
         if (this.col >= 1){
           this.col--;
         }
         break;
-      case 39: //right arrow
+      case 39:
         if (this.col <= 6){
           this.col++;
         }
@@ -54,8 +54,8 @@ Bubble.color = function(value){
   }
 };
 Bubble.prototype.draw = function(){
-  var pos_x = this.col * 60 + 40 + 30;
-  this.ctx.fillStyle = this.hidden ? "black" : this.color;
+  var pos_x = this.col * 60 + 120 + 30;
+  this.ctx.fillStyle = this.hidden ? "#333" : this.color;
   this.ctx.beginPath();
   this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
   this.ctx.fill();
