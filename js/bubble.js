@@ -62,6 +62,7 @@ Bubble.prototype.draw = function(){
   this.ctx.strokeStyle = "white";
   this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
 };
+
 Bubble.prototype.setAutoFall = function(){
   this.autoFall = true;
   this.speed = 10;
@@ -69,6 +70,11 @@ Bubble.prototype.setAutoFall = function(){
 
 Bubble.prototype.fall = function(){
   this.pos_y += this.speed;
+};
+
+Bubble.prototype.isEqual = function(bubble){
+  return !!bubble && this.pos_y === bubble.pos_y && this.col === bubble.col &&
+          this.value === bubble.value;
 };
 
 module.exports = Bubble;
