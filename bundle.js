@@ -172,7 +172,7 @@
 	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
-	  setInterval(this.incrementTime.bind(this), 10)
+	  setInterval(this.incrementTime.bind(this), 10);
 	};
 	Game.prototype.updateScore = function(numOfBubbles){
 	  if (numOfBubbles === 0) return;
@@ -185,6 +185,7 @@
 	Game.prototype.updatePosition = function(e){
 	    var posY = this.currentBubble.pos_y,
 	        col = this.currentBubble.col;
+	
 	    if (!this.currentBubble.autoFall){
 	    switch (e.which){
 	      case 32: 
@@ -192,17 +193,16 @@
 	        break;
 	      case 37: 
 	        if (col >= 1 && posY < (750 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
-	          col--;
+	          this.currentBubble.col--;
 	        }
 	        break;
 	      case 39:
-	        if (col <= 6 && posY < (750 - (this.grid[col + 1] * 60 + 30 + 30))){
-	          col++;
+	        if (col <= 6 && posY < (750 - ((this.grid[col + 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
+	          this.currentBubble.col++;
 	        }
 	        break;
 	    }  
 	  }
-	  // this.currentBubble.moveX(e.which);
 	};
 	
 	Game.prototype.addBubble = function(){
@@ -215,7 +215,6 @@
 	};
 	
 	Game.prototype.moveBubble = function(){
-	  console.log(this.colSums);
 	  var bubbleCol = this.currentBubble.col,
 	      currentCol = this.grid[this.currentBubble.col];
 	  numOfBubblesInCol = currentCol.reduce(function(a, b){
@@ -347,8 +346,8 @@
 	};
 	
 	Game.prototype.unveilSurroundings = function(col, row){
-	  if (col < 6 && this.grid[col + 1][row]) this.grid[col + 1][row].unveil();
-	  if (col > 1 && this.grid[col - 1][row]) this.grid[col - 1][row].unveil();
+	  if (col < 7 && this.grid[col + 1][row]) this.grid[col + 1][row].unveil();
+	  if (col > 0 && this.grid[col - 1][row]) this.grid[col - 1][row].unveil();
 	  if (this.grid[col][row + 1]) this.grid[col][row + 1].unveil();
 	  if (this.grid[col][row - 1]) this.grid[col][row - 1].unveil();
 	};
@@ -407,6 +406,7 @@
 	  this.color = Bubble.color(value);
 	  this.autoFall = autoFall || false;
 	  this.hidden = hidden || false;
+	  this.image = document.getElementById("source");
 	};
 	
 	Bubble.prototype.moveX = function(keyCode){
@@ -431,31 +431,31 @@
 	Bubble.color = function(value){
 	  switch(value){
 	    case 2:
-	      return "#009900";
+	      return [0, 0];
 	      break;
 	    case 3:
-	      return "#000099";
+	      return [202, 202];
 	      break;
 	    case 4:
-	      return "#994d00";
+	      return [404, 0];
 	      break;
 	    case 5:
-	      return "#990000";
+	      return [404, 202];
 	      break;
 	    case 6:
-	      return "#009999";
+	      return [202, 404];
 	      break;
 	    case 7:
-	      return "#000000";
+	      return [0, 404];
 	      break;
 	  }
 	};
 	Bubble.prototype.draw = function(){
 	  var pos_x = this.col * 60 + 120 + 30;
-	  this.ctx.fillStyle = this.hidden ? "#333" : this.color;
+	  var color = this.hidden ? [202, 0] : this.color;
 	  this.ctx.beginPath();
-	  this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
-	  this.ctx.fill();
+	
+	  this.ctx.drawImage(this.image, color[0], color[1], 200, 200, pos_x - 30, this.pos_y - 32, 65, 65);
 	  if (!this.hidden){
 	    this.ctx.font = "20px Lato";
 	    this.ctx.strokeStyle = "white";

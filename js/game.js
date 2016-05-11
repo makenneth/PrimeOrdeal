@@ -18,7 +18,7 @@ var Game = function(ctx){
   this.dropHiddenBubbles();
   this.currentBubble = this.addBubble();
   $(document).on("keydown", this.updatePosition.bind(this));
-  setInterval(this.incrementTime.bind(this), 10)
+  setInterval(this.incrementTime.bind(this), 10);
 };
 Game.prototype.updateScore = function(numOfBubbles){
   if (numOfBubbles === 0) return;
@@ -31,6 +31,7 @@ Game.prototype.incrementTime = function(){
 Game.prototype.updatePosition = function(e){
     var posY = this.currentBubble.pos_y,
         col = this.currentBubble.col;
+
     if (!this.currentBubble.autoFall){
     switch (e.which){
       case 32: 
@@ -38,17 +39,16 @@ Game.prototype.updatePosition = function(e){
         break;
       case 37: 
         if (col >= 1 && posY < (750 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
-          col--;
+          this.currentBubble.col--;
         }
         break;
       case 39:
-        if (col <= 6 && posY < (750 - (this.grid[col + 1] * 60 + 30 + 30))){
-          col++;
+        if (col <= 6 && posY < (750 - ((this.grid[col + 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
+          this.currentBubble.col++;
         }
         break;
     }  
   }
-  // this.currentBubble.moveX(e.which);
 };
 
 Game.prototype.addBubble = function(){
@@ -61,7 +61,6 @@ Game.prototype.addBubble = function(){
 };
 
 Game.prototype.moveBubble = function(){
-  console.log(this.colSums);
   var bubbleCol = this.currentBubble.col,
       currentCol = this.grid[this.currentBubble.col];
   numOfBubblesInCol = currentCol.reduce(function(a, b){
@@ -193,8 +192,8 @@ Game.prototype.deleteBubbles = function(coords){
 };
 
 Game.prototype.unveilSurroundings = function(col, row){
-  if (col < 6 && this.grid[col + 1][row]) this.grid[col + 1][row].unveil();
-  if (col > 1 && this.grid[col - 1][row]) this.grid[col - 1][row].unveil();
+  if (col < 7 && this.grid[col + 1][row]) this.grid[col + 1][row].unveil();
+  if (col > 0 && this.grid[col - 1][row]) this.grid[col - 1][row].unveil();
   if (this.grid[col][row + 1]) this.grid[col][row + 1].unveil();
   if (this.grid[col][row - 1]) this.grid[col][row - 1].unveil();
 };

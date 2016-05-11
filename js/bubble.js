@@ -8,6 +8,7 @@ var Bubble = function(ctx, col, speed, value, autoFall, hidden){
   this.color = Bubble.color(value);
   this.autoFall = autoFall || false;
   this.hidden = hidden || false;
+  this.image = document.getElementById("source");
 };
 
 Bubble.prototype.moveX = function(keyCode){
@@ -32,31 +33,31 @@ Bubble.prototype.moveX = function(keyCode){
 Bubble.color = function(value){
   switch(value){
     case 2:
-      return "#009900";
+      return [0, 0];
       break;
     case 3:
-      return "#000099";
+      return [202, 202];
       break;
     case 4:
-      return "#994d00";
+      return [404, 0];
       break;
     case 5:
-      return "#990000";
+      return [404, 202];
       break;
     case 6:
-      return "#009999";
+      return [202, 404];
       break;
     case 7:
-      return "#000000";
+      return [0, 404];
       break;
   }
 };
 Bubble.prototype.draw = function(){
   var pos_x = this.col * 60 + 120 + 30;
-  this.ctx.fillStyle = this.hidden ? "#333" : this.color;
+  var color = this.hidden ? [202, 0] : this.color;
   this.ctx.beginPath();
-  this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
-  this.ctx.fill();
+
+  this.ctx.drawImage(this.image, color[0], color[1], 200, 200, pos_x - 30, this.pos_y - 32, 65, 65);
   if (!this.hidden){
     this.ctx.font = "20px Lato";
     this.ctx.strokeStyle = "white";
