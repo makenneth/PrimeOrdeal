@@ -78,4 +78,8 @@ Bubble.prototype.isEqual = function(bubble){
           this.value === bubble.value;
 };
 
+Bubble.prototype.unveil = function(){
+  this.hidden = false;
+};
+
 module.exports = Bubble;

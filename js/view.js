@@ -75,13 +75,13 @@ View.prototype.loseScreen = function(int){
 	this.ctx.clearRect(0, 0, 640, 800);
   this.ctx.font = "36px Arial";
 	this.ctx.fillStyle = "black";
-	this.ctx.fillText("YOU LOST!", 140, 100);
+	this.ctx.fillText("YOU LOST!", 140, 140);
 	this.ctx.font = "36px Arial";
 	this.ctx.fillStyle = "black";
-	this.ctx.fillText("Your score was:", 140, 140);
+	this.ctx.fillText("Your score was:", 140, 340);
 	this.ctx.font = "36px Arial";
 	this.ctx.fillStyle = "black";
-	this.ctx.fillText(this.game.score, 140, 180);
+	this.ctx.fillText(this.game.score, 140, 380);
 };
 
 module.exports = View;

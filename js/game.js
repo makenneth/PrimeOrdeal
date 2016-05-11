@@ -33,7 +33,7 @@ Game.prototype.updatePosition = function(e){
 };
 
 Game.prototype.addBubble = function(){
-  var speed = this.timeElapsed / 3000 + 1,  
+  var speed = 1,  
       randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7,
       xPos = Math.floor(Math.random() * 8), //(canvas size/6) (offset for 40 pixel) (30 for radius)
       newBubble = new Bubble(this.ctx, xPos, speed, randomNum);
@@ -42,7 +42,7 @@ Game.prototype.addBubble = function(){
 };
 
 Game.prototype.moveBubble = function(){
-  console.log(this.colSums.join(", "))
+  console.log(this.colSums);
   var bubbleCol = this.currentBubble.col,
       currentCol = this.grid[this.currentBubble.col];
   numOfBubblesInCol = currentCol.reduce(function(a, b){
@@ -84,9 +84,7 @@ Game.prototype.dropHiddenBubbles = function(){
 
  //add sum to col
 };
-
-
-Game.prototype.draw = function(){
+Game.prototype.drawText= function(){
   this.ctx.clearRect(0, 0, 640, 800);
   this.ctx.font = "36px Arial";
   this.ctx.fillStyle = "black";
@@ -102,7 +100,11 @@ Game.prototype.draw = function(){
   this.ctx.fillText("Turns Left", 14, 520);
   this.ctx.font = "24px Arial";
   this.ctx.fillStyle = "black";
-  this.ctx.fillText(7 -this.turns, 44, 560);
+  this.ctx.fillText(10 -this.turns, 44, 560);
+}
+
+Game.prototype.draw = function(){
+  this.drawText();
   this.ctx.beginPath();
   this.ctx.lineWidth = 4;
   this.ctx.moveTo(118, 80);
@@ -113,7 +115,7 @@ Game.prototype.draw = function(){
   this.ctx.stroke();
   this.ctx.lineWidth = 2;
   this.ctx.fillStyle = "black";
-  if (this.turns === 7){
+  if (this.turns === 10){
     this.turns = 0;
     this.dropHiddenBubbles();
   }
@@ -136,7 +138,7 @@ Game.prototype.checkPrimesInRows = function(){
       currentSum += this.grid[j][i].value;
 
       if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"){
-        if ((j - startPoint) > 1 && this.primes.indexOf(currentSum) > -1){
+        if ((j - startPoint) > 0 && this.primes.indexOf(currentSum) > -1){
           for (var m = startPoint; m <= j; m++){
             bubblesToDelete.push([m, i]);
           }
@@ -155,7 +157,7 @@ Game.prototype.deleteBubbles = function(coords){
   }); 
   //so I can shift bubble from the top down,
   //not having to worry about
-  coords.forEach(function(coord, j){
+  coords.forEach(function(coord){
     var currentBubble = this.grid[coord[0]][coord[1]];
     var idx = this.bubbles.findIndex(function(bubble){
       return bubble.isEqual(currentBubble);
@@ -163,21 +165,22 @@ Game.prototype.deleteBubbles = function(coords){
     if (idx > -1){
       this.colSums[coord[0]] -= currentBubble.value;
       this.grid[coord[0]][coord[1]] = undefined;
+      this.unveilSurroundings(coord[0], coord[1]);
       this.grid[coord[0]].splice(coord[1], 1);
       this.grid[coord[0]].push(undefined);
       this.bubbles.splice(idx, 1);
     }
-    if (j === coords.length -1){
-      this.shiftBubble();
-    }
   }.bind(this));
 };
 
-Game.prototype.shiftBubble = function(){
+Game.prototype.unveilSurroundings = function(col, row){
+  if (col < 6 && this.grid[col + 1][row]) this.grid[col + 1][row].unveil();
+  if (col > 1 && this.grid[col - 1][row]) this.grid[col - 1][row].unveil();
+  if (this.grid[col][row + 1]) this.grid[col][row + 1].unveil();
+  if (this.grid[col][row - 1]) this.grid[col][row - 1].unveil();
 };
 
 Game.prototype.checkPrimesInCols = function(bubblesToDelete){
-
   for (var j = 0; j < this.colSums.length; j++){
     if (this.grid[j].findIndex(function(cell){ 
           return !!cell && cell.hidden; 
@@ -192,7 +195,7 @@ Game.prototype.checkPrimesInCols = function(bubblesToDelete){
 
         if (bubblesToDelete.findIndex(function(coord){
            return coord.toString() === [m, j].toString();
-        }) > -1){
+        }) === -1){
            bubblesToDelete.push([m, j]);
         }
       }
