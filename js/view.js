@@ -60,7 +60,7 @@ View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
 	this.ctx.font = "64px Lato";
 	this.ctx.fillStyle = "black";
-	this.ctx.fillText("PrimeOrdeal", 140, 400);
+	this.ctx.fillText("PrimeOrdealllll", 140, 400);
 	this.ctx.font = "36px Lato";
 	this.ctx.fillText("Start", 120, 100);
 	this.ctx.font = "36px Lato";

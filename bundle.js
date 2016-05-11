@@ -118,7 +118,7 @@
 		this.ctx.clearRect(0, 0, 640, 800);
 		this.ctx.font = "64px Lato";
 		this.ctx.fillStyle = "black";
-		this.ctx.fillText("PrimeOrdeal", 140, 400);
+		this.ctx.fillText("PrimeOrdealllll", 140, 400);
 		this.ctx.font = "36px Lato";
 		this.ctx.fillText("Start", 120, 100);
 		this.ctx.font = "36px Lato";
@@ -185,14 +185,13 @@
 	Game.prototype.updatePosition = function(e){
 	    var posY = this.currentBubble.pos_y,
 	        col = this.currentBubble.col;
-	        debugger;
 	    if (!this.currentBubble.autoFall){
 	    switch (e.which){
 	      case 32: 
 	        this.currentBubble.setAutoFall();
 	        break;
 	      case 37: 
-	        if (col >= 1 && posY < (750 - (this.grid[col - 1].pos_y * 60 + 30 + 30))){
+	        if (col >= 1 && posY < (750 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
 	          col--;
 	        }
 	        break;

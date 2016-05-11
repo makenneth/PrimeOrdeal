@@ -31,14 +31,13 @@ Game.prototype.incrementTime = function(){
 Game.prototype.updatePosition = function(e){
     var posY = this.currentBubble.pos_y,
         col = this.currentBubble.col;
-        debugger;
     if (!this.currentBubble.autoFall){
     switch (e.which){
       case 32: 
         this.currentBubble.setAutoFall();
         break;
       case 37: 
-        if (col >= 1 && posY < (750 - (this.grid[col - 1].pos_y * 60 + 30 + 30))){
+        if (col >= 1 && posY < (750 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
           col--;
         }
         break;
