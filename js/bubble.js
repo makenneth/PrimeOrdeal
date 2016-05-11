@@ -26,8 +26,6 @@ Bubble.prototype.moveX = function(keyCode){
           this.col++;
         }
         break;
-      case 40: //accelerate (down arrow)
-        break;
     }  
   }
 }
@@ -72,14 +70,16 @@ Bubble.prototype.setAutoFall = function(){
 };
 
 Bubble.prototype.fall = function(){
-  //add condition to move back up
-  //and measure height not with radius but with actual pos
   this.pos_y += this.speed;
 };
 
 Bubble.prototype.isEqual = function(bubble){
   return !!bubble && this.pos_y === bubble.pos_y && this.col === bubble.col &&
           this.value === bubble.value;
+};
+
+Bubble.prototype.unveil = function(){
+  this.hidden = false;
 };
 
 module.exports = Bubble;
