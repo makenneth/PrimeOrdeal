@@ -16,7 +16,8 @@ View.prototype.start = function() {
     		case 2:
     			this.gameScreen.call(this, intId);
     			break;
-    		case 3:
+    		case 5:
+    		 this.loseScreen.call(this, intId);
     			break;
     	}
     }.bind(this), 20);
@@ -64,14 +65,23 @@ View.prototype.startScreen = function(){
 	this.ctx.fillText("Instructions", 120, 150);
 
 }
-View.prototype.hasWon = function(int) {
+View.prototype.hasWon = function() {
 	if (this.game.lost()){
-		clearInterval(int);
-		this.ctx.clearRect(0, 0, 640, 800);
-	  this.ctx.font = "36px Arial";
-		this.ctx.fillStyle = "black";
-		this.ctx.fillText("YOU LOST!", 140, 100);
+		this.page = 5;
 	}
+};
+View.prototype.loseScreen = function(int){
+	clearInterval(int);
+	this.ctx.clearRect(0, 0, 640, 800);
+  this.ctx.font = "36px Arial";
+	this.ctx.fillStyle = "black";
+	this.ctx.fillText("YOU LOST!", 140, 100);
+	this.ctx.font = "36px Arial";
+	this.ctx.fillStyle = "black";
+	this.ctx.fillText("Your score was:", 140, 140);
+	this.ctx.font = "36px Arial";
+	this.ctx.fillStyle = "black";
+	this.ctx.fillText(this.game.score, 140, 180);
 };
 
 module.exports = View;

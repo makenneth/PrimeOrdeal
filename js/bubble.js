@@ -26,8 +26,6 @@ Bubble.prototype.moveX = function(keyCode){
           this.col++;
         }
         break;
-      case 40: //accelerate (down arrow)
-        break;
     }  
   }
 }

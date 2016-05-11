@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var View = __webpack_require__(1);
-
+	
 	document.addEventListener("DOMContentLoaded", function(){
 		var canvas = document.getElementById("canvas");
 		var ctx = canvas.getContext('2d');
@@ -64,7 +64,7 @@
 	  document.addEventListener("click", this.findMousePos.bind(this));
 	  document.onmousemove = this.moveMouse.bind(this);
 	};
-
+	
 	View.prototype.start = function() {
 	    var intId = setInterval(function(){
 	    	switch (this.page){
@@ -74,7 +74,8 @@
 	    		case 2:
 	    			this.gameScreen.call(this, intId);
 	    			break;
-	    		case 3:
+	    		case 5:
+	    		 this.loseScreen.call(this, intId);
 	    			break;
 	    	}
 	    }.bind(this), 20);
@@ -120,18 +121,27 @@
 		this.ctx.fillText("Start", 120, 100);
 		this.ctx.font = "36px Arial";
 		this.ctx.fillText("Instructions", 120, 150);
-
+	
 	}
-	View.prototype.hasWon = function(int) {
+	View.prototype.hasWon = function() {
 		if (this.game.lost()){
-			clearInterval(int);
-			this.ctx.clearRect(0, 0, 640, 800);
-		  this.ctx.font = "36px Arial";
-			this.ctx.fillStyle = "black";
-			this.ctx.fillText("YOU LOST!", 140, 100);
+			this.page = 5;
 		}
 	};
-
+	View.prototype.loseScreen = function(int){
+		clearInterval(int);
+		this.ctx.clearRect(0, 0, 640, 800);
+	  this.ctx.font = "36px Arial";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText("YOU LOST!", 140, 100);
+		this.ctx.font = "36px Arial";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText("Your score was:", 140, 140);
+		this.ctx.font = "36px Arial";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText(this.game.score, 140, 180);
+	};
+	
 	module.exports = View;
 
 /***/ },
@@ -153,22 +163,25 @@
 	  
 	  this.colSums = Array.from(Array(8), function(_){return 0;});
 	  this.timeElapsed = 0;
-	  this.turns = 0; //every 7 turns, new balls will drop
+	  this.turns = 0; 
 	  this.score = 0;
 	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
 	  setInterval(this.incrementTime.bind(this), 10)
 	};
-
+	Game.prototype.updateScore = function(numOfBubbles){
+	  if (numOfBubbles === 0) return;
+	  this.score += 2 * Math.pow(2, 2 * numOfBubbles - 1);
+	};
 	Game.prototype.incrementTime = function(){
 	  this.timeElapsed++;
 	};
-
+	
 	Game.prototype.updatePosition = function(e){
 	  this.currentBubble.moveX(e.which);
 	};
-
+	
 	Game.prototype.addBubble = function(){
 	  var speed = this.timeElapsed / 3000 + 1,  
 	      randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7,
@@ -177,8 +190,9 @@
 	  this.bubbles.push(newBubble);
 	  return newBubble;
 	};
-
+	
 	Game.prototype.moveBubble = function(){
+	  console.log(this.colSums.join(", "))
 	  var bubbleCol = this.currentBubble.col,
 	      currentCol = this.grid[this.currentBubble.col];
 	  numOfBubblesInCol = currentCol.reduce(function(a, b){
@@ -189,14 +203,11 @@
 	    this.colSums[bubbleCol] += this.currentBubble.value; 
 	    this.currentBubble = this.addBubble();
 	    this.turns++;
-	    // this.clearPrimeRow();
-	    // .indexOf() in the column and determine whether or not they equal those pos
-	    this.clearPrimeCol();
-	    console.log(this.colSums.join(", "));
+	    this.checkPrimesInRows();
 	  } else {
 	    this.currentBubble.fall(); //check every bubble if they're where they're supposed to be
 	  }
-
+	
 	  for (var i = 0; i < this.grid.length; i++){
 	    var currentCol = this.grid[i];
 	    if (currentCol.every(function(cell){return !cell;})) continue;
@@ -211,17 +222,20 @@
 	    }
 	  }
 	};
-
+	
 	Game.prototype.dropHiddenBubbles = function(){
 	  this.grid.forEach(function(col, idx){
 	    var randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7;
 	    var newBubble = new Bubble(this.ctx, idx, 10, randomNum, true, true);
 	    col[col.indexOf(undefined)] = newBubble;//index of looks for the first item that is undefined
+	    this.colSums[idx] += randomNum;
 	    this.bubbles.push(newBubble);
 	  }.bind(this));
+	
+	 //add sum to col
 	};
-
-
+	
+	
 	Game.prototype.draw = function(){
 	  this.ctx.clearRect(0, 0, 640, 800);
 	  this.ctx.font = "36px Arial";
@@ -257,71 +271,77 @@
 	      bubble.draw(); 
 	  });
 	};
-
-	Game.prototype.clearPrimeRow = function(){
+	
+	Game.prototype.checkPrimesInRows = function(){  
+	  var bubblesToDelete = [];
 	  for (var i = 0; i < this.grid[0].length; i++){
-	    var rangesToDelete = [], currentSum = 0,
-	        startPoint = 0;
+	
+	    var currentSum = 0, startPoint = 0;
 	    for (var j = 0; j < this.grid.length; j++){
-	      if (typeof this.grid[j][i] === "undefined") continue;
+	      if (typeof this.grid[j][i] === "undefined" || this.grid[j][i].hidden){
+	        startPoint = j + 1;
+	        currentSum = 0;
+	        continue;
+	      }
 	      currentSum += this.grid[j][i].value;
+	
 	      if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"){
-	        if (this.primes.indexOf(currentSum) > -1){
-	          rangesToDelete.push([startPoint, j]);
+	        if ((j - startPoint) > 1 && this.primes.indexOf(currentSum) > -1){
+	          for (var m = startPoint; m <= j; m++){
+	            bubblesToDelete.push([m, i]);
+	          }
 	        }
 	        startPoint = j;
 	        currentSum = 0;        
 	      }
 	    }
-	    this.deleteBubblesInRow(i, rangesToDelete);
 	  }
-
+	  this.checkPrimesInCols(bubblesToDelete);
 	};
-
-	Game.prototype.deleteBubblesInRow = function(row, ranges){
-	  var toClear = [];
-	  for (var i = 0; i < ranges.length; i++){
-	    for (var j = ranges[i][0]; j <= ranges[i][1]; j++){
-	      var idx = this.bubbles.findIndex(function(bubble){
-	        return bubble.isEqual(this.grid[j][row])
-	      }.bind(this));   
-	      if (idx > -1){
-	        this.colSums[this.bubbles[idx].col] -= this.bubbles[idx].value;
-	        this.bubbles.splice(idx, 1);
-	      }
-	    // toClear.push([j, idx]);
+	
+	Game.prototype.deleteBubbles = function(coords){
+	  coords.forEach(function(coord){
+	    var currentBubble = this.grid[coord[0]][coord[1]];
+	    var idx = this.bubbles.findIndex(function(bubble){
+	      return bubble.isEqual(currentBubble);
+	    });
+	    if (idx > -1){
+	      this.colSums[coord[0]] -= currentBubble.value;
+	      this.grid[coord[0]][coord[1]] = undefined;
+	      this.bubbles.splice(idx, 1);
 	    }
-	    // if (i === (range.length - 1) this.clearPrimeCol(toClear));
-	  }
-	};  
-
-	Game.prototype.clearPrimeCol = function(){
+	  }.bind(this));
+	};
+	
+	Game.prototype.checkPrimesInCols = function(bubblesToDelete){
+	
 	  for (var j = 0; j < this.colSums.length; j++){
-
+	    if (this.grid[j].findIndex(function(cell){ 
+	          return !!cell && cell.hidden; 
+	        }) > -1){
+	      continue;
+	    }
 	    if (this.primes.indexOf(this.colSums[j]) > -1 && 
 	          this.grid[j].reduce(function(a,b){
 	            return a + (!!b ? 1 : 0);
-	          },0) > 2){
+	          },0) > 1){
 	      for (var m = 0; m < this.grid[j].length; m++){
-	         this.clearBubblesInCol(j, m);
+	
+	        if (bubblesToDelete.findIndex(function(coord){
+	           return coord.toString() === [m, j].toString();
+	        }) > -1){
+	           bubblesToDelete.push([m, j]);
+	        }
 	      }
 	    }
 	  }
+	  this.deleteBubbles(bubblesToDelete);
+	  this.updateScore(bubblesToDelete.length);
 	};
-
-	Game.prototype.clearBubblesInCol = function(col, row){
-	    var idx = this.bubbles.findIndex(function(bubble){
-	      return bubble.isEqual(this.grid[col][row]);
-	    }.bind(this));
-	    if (idx >= 0){
-	      this.bubbles.splice(idx, 1);
-	    }
-	    this.grid[col][row] = undefined;
-	    this.colSums[col] = 0;
-	};
-
+	
+	
 	Game.prototype.lost = function(){
-
+	
 	  if (this.grid.some(function(col){
 	    return col.every(function(cell){ 
 	      return !!cell;
@@ -331,7 +351,7 @@
 	  }
 	  return false;
 	};
-
+	
 	module.exports = Game;
 
 /***/ },
@@ -349,7 +369,7 @@
 	  this.autoFall = autoFall || false;
 	  this.hidden = hidden || false;
 	};
-
+	
 	Bubble.prototype.moveX = function(keyCode){
 	  if (!this.autoFall){
 	    switch (keyCode){
@@ -365,8 +385,6 @@
 	        if (this.col <= 6){
 	          this.col++;
 	        }
-	        break;
-	      case 40: //accelerate (down arrow)
 	        break;
 	    }  
 	  }
@@ -405,24 +423,25 @@
 	    this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
 	  }
 	};
-
+	
 	Bubble.prototype.setAutoFall = function(){
 	  this.autoFall = true;
 	  this.speed = 10;
 	};
-
+	
 	Bubble.prototype.fall = function(){
 	  //add condition to move back up
 	  //and measure height not with radius but with actual pos
 	  this.pos_y += this.speed;
 	};
-
+	
 	Bubble.prototype.isEqual = function(bubble){
 	  return !!bubble && this.pos_y === bubble.pos_y && this.col === bubble.col &&
 	          this.value === bubble.value;
 	};
-
+	
 	module.exports = Bubble;
 
 /***/ }
 /******/ ]);
+//# sourceMappingURL=bundle.js.map
