@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var View = __webpack_require__(1);
-
+	
 	document.addEventListener("DOMContentLoaded", function(){
 		var canvas = document.getElementById("canvas");
 		var ctx = canvas.getContext('2d');
@@ -64,7 +64,7 @@
 	  document.addEventListener("click", this.findMousePos.bind(this));
 	  document.onmousemove = this.moveMouse.bind(this);
 	};
-
+	
 	View.prototype.start = function() {
 	    var intId = setInterval(function(){
 	    	switch (this.page){
@@ -120,7 +120,7 @@
 		this.ctx.fillText("Start", 120, 100);
 		this.ctx.font = "36px Arial";
 		this.ctx.fillText("Instructions", 120, 150);
-
+	
 	}
 	View.prototype.hasWon = function(int) {
 		if (this.game.lost()){
@@ -131,7 +131,7 @@
 			this.ctx.fillText("YOU LOST!", 140, 100);
 		}
 	};
-
+	
 	module.exports = View;
 
 /***/ },
@@ -160,15 +160,15 @@
 	  $(document).on("keydown", this.updatePosition.bind(this));
 	  setInterval(this.incrementTime.bind(this), 10)
 	};
-
+	
 	Game.prototype.incrementTime = function(){
 	  this.timeElapsed++;
 	};
-
+	
 	Game.prototype.updatePosition = function(e){
 	  this.currentBubble.moveX(e.which);
 	};
-
+	
 	Game.prototype.addBubble = function(){
 	  var speed = this.timeElapsed / 3000 + 1,  
 	      randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7,
@@ -177,7 +177,7 @@
 	  this.bubbles.push(newBubble);
 	  return newBubble;
 	};
-
+	
 	Game.prototype.moveBubble = function(){
 	  var bubbleCol = this.currentBubble.col,
 	      currentCol = this.grid[this.currentBubble.col];
@@ -196,7 +196,7 @@
 	  } else {
 	    this.currentBubble.fall(); //check every bubble if they're where they're supposed to be
 	  }
-
+	
 	  for (var i = 0; i < this.grid.length; i++){
 	    var currentCol = this.grid[i];
 	    if (currentCol.every(function(cell){return !cell;})) continue;
@@ -211,7 +211,7 @@
 	    }
 	  }
 	};
-
+	
 	Game.prototype.dropHiddenBubbles = function(){
 	  this.grid.forEach(function(col, idx){
 	    var randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7;
@@ -220,8 +220,8 @@
 	    this.bubbles.push(newBubble);
 	  }.bind(this));
 	};
-
-
+	
+	
 	Game.prototype.draw = function(){
 	  this.ctx.clearRect(0, 0, 640, 800);
 	  this.ctx.font = "36px Arial";
@@ -257,7 +257,7 @@
 	      bubble.draw(); 
 	  });
 	};
-
+	
 	Game.prototype.clearPrimeRow = function(){
 	  for (var i = 0; i < this.grid[0].length; i++){
 	    var rangesToDelete = [], currentSum = 0,
@@ -275,9 +275,9 @@
 	    }
 	    this.deleteBubblesInRow(i, rangesToDelete);
 	  }
-
+	
 	};
-
+	
 	Game.prototype.deleteBubblesInRow = function(row, ranges){
 	  var toClear = [];
 	  for (var i = 0; i < ranges.length; i++){
@@ -294,10 +294,10 @@
 	    // if (i === (range.length - 1) this.clearPrimeCol(toClear));
 	  }
 	};  
-
+	
 	Game.prototype.clearPrimeCol = function(){
 	  for (var j = 0; j < this.colSums.length; j++){
-
+	
 	    if (this.primes.indexOf(this.colSums[j]) > -1 && 
 	          this.grid[j].reduce(function(a,b){
 	            return a + (!!b ? 1 : 0);
@@ -308,7 +308,7 @@
 	    }
 	  }
 	};
-
+	
 	Game.prototype.clearBubblesInCol = function(col, row){
 	    var idx = this.bubbles.findIndex(function(bubble){
 	      return bubble.isEqual(this.grid[col][row]);
@@ -319,9 +319,9 @@
 	    this.grid[col][row] = undefined;
 	    this.colSums[col] = 0;
 	};
-
+	
 	Game.prototype.lost = function(){
-
+	
 	  if (this.grid.some(function(col){
 	    return col.every(function(cell){ 
 	      return !!cell;
@@ -331,7 +331,7 @@
 	  }
 	  return false;
 	};
-
+	
 	module.exports = Game;
 
 /***/ },
@@ -349,7 +349,7 @@
 	  this.autoFall = autoFall || false;
 	  this.hidden = hidden || false;
 	};
-
+	
 	Bubble.prototype.moveX = function(keyCode){
 	  if (!this.autoFall){
 	    switch (keyCode){
@@ -405,24 +405,25 @@
 	    this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
 	  }
 	};
-
+	
 	Bubble.prototype.setAutoFall = function(){
 	  this.autoFall = true;
 	  this.speed = 10;
 	};
-
+	
 	Bubble.prototype.fall = function(){
 	  //add condition to move back up
 	  //and measure height not with radius but with actual pos
 	  this.pos_y += this.speed;
 	};
-
+	
 	Bubble.prototype.isEqual = function(bubble){
 	  return !!bubble && this.pos_y === bubble.pos_y && this.col === bubble.col &&
 	          this.value === bubble.value;
 	};
-
+	
 	module.exports = Bubble;
 
 /***/ }
 /******/ ]);
+//# sourceMappingURL=bundle.js.map
