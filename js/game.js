@@ -150,7 +150,12 @@ Game.prototype.checkPrimesInRows = function(){
 };
 
 Game.prototype.deleteBubbles = function(coords){
-  coords.forEach(function(coord){
+  var coords = coords.sort(function(a,b){
+    return b[1] - a[1];
+  }); 
+  //so I can shift bubble from the top down,
+  //not having to worry about
+  coords.forEach(function(coord, j){
     var currentBubble = this.grid[coord[0]][coord[1]];
     var idx = this.bubbles.findIndex(function(bubble){
       return bubble.isEqual(currentBubble);
@@ -158,9 +163,17 @@ Game.prototype.deleteBubbles = function(coords){
     if (idx > -1){
       this.colSums[coord[0]] -= currentBubble.value;
       this.grid[coord[0]][coord[1]] = undefined;
+      this.grid[coord[0]].splice(coord[1], 1);
+      this.grid[coord[0]].push(undefined);
       this.bubbles.splice(idx, 1);
     }
+    if (j === coords.length -1){
+      this.shiftBubble();
+    }
   }.bind(this));
+};
+
+Game.prototype.shiftBubble = function(){
 };
 
 Game.prototype.checkPrimesInCols = function(bubblesToDelete){

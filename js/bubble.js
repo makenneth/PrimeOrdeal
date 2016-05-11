@@ -70,8 +70,6 @@ Bubble.prototype.setAutoFall = function(){
 };
 
 Bubble.prototype.fall = function(){
-  //add condition to move back up
-  //and measure height not with radius but with actual pos
   this.pos_y += this.speed;
 };
 
