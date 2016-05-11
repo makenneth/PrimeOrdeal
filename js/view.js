@@ -45,6 +45,8 @@ View.prototype.findMousePos = function(event){
 			this.page = 2;
 		} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
 			this.page = 3;
+		}	else if (x >= 161 && x <= 246 && y >= 512 && y <= 545){
+			this.page = 2;
 		}
 	}
 };
@@ -56,12 +58,12 @@ View.prototype.gameScreen = function(intId){
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
-	this.ctx.font = "64px Arial";
+	this.ctx.font = "64px Lato";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("PrimeOrdeal", 140, 400);
-	this.ctx.font = "36px Arial";
+	this.ctx.font = "36px Lato";
 	this.ctx.fillText("Start", 120, 100);
-	this.ctx.font = "36px Arial";
+	this.ctx.font = "36px Lato";
 	this.ctx.fillText("Instructions", 120, 150);
 
 }
@@ -71,17 +73,19 @@ View.prototype.hasWon = function() {
 	}
 };
 View.prototype.loseScreen = function(int){
-	clearInterval(int);
 	this.ctx.clearRect(0, 0, 640, 800);
-  this.ctx.font = "36px Arial";
+  this.ctx.font = "36px Lato";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("YOU LOST!", 140, 140);
-	this.ctx.font = "36px Arial";
+	this.ctx.font = "36px Lato";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("Your score was:", 140, 340);
-	this.ctx.font = "36px Arial";
+	this.ctx.font = "36px Lato";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText(this.game.score, 140, 380);
+	this.ctx.font = "36px Lato";
+	this.ctx.fillStyle = "black";
+	this.ctx.fillText("Retry", 140, 520);
 };
 
 module.exports = View;

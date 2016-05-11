@@ -29,7 +29,27 @@ Game.prototype.incrementTime = function(){
 };
 
 Game.prototype.updatePosition = function(e){
-  this.currentBubble.moveX(e.which);
+    var posY = this.currentBubble.pos_y,
+        col = this.currentBubble.col;
+        debugger;
+    if (!this.currentBubble.autoFall){
+    switch (e.which){
+      case 32: 
+        this.currentBubble.setAutoFall();
+        break;
+      case 37: 
+        if (col >= 1 && posY < (750 - (this.grid[col - 1].pos_y * 60 + 30 + 30))){
+          col--;
+        }
+        break;
+      case 39:
+        if (col <= 6 && posY < (750 - (this.grid[col + 1] * 60 + 30 + 30))){
+          col++;
+        }
+        break;
+    }  
+  }
+  // this.currentBubble.moveX(e.which);
 };
 
 Game.prototype.addBubble = function(){
@@ -86,19 +106,19 @@ Game.prototype.dropHiddenBubbles = function(){
 };
 Game.prototype.drawText= function(){
   this.ctx.clearRect(0, 0, 640, 800);
-  this.ctx.font = "36px Arial";
+  this.ctx.font = "36px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText("PrimeOrdeal", 40, 60);
-  this.ctx.font = "24px Arial";
+  this.ctx.font = "24px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText("Score", 24, 280);
-  this.ctx.font = "24px Arial";
+  this.ctx.font = "24px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText(this.score, 44, 320);
-  this.ctx.font = "20px Arial";
+  this.ctx.font = "20px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText("Turns Left", 14, 520);
-  this.ctx.font = "24px Arial";
+  this.ctx.font = "24px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText(10 -this.turns, 44, 560);
 }
@@ -107,10 +127,10 @@ Game.prototype.draw = function(){
   this.drawText();
   this.ctx.beginPath();
   this.ctx.lineWidth = 4;
-  this.ctx.moveTo(118, 80);
+  this.ctx.moveTo(118, 120);
   this.ctx.lineTo(118, 722);
   this.ctx.lineTo(602, 722);
-  this.ctx.lineTo(602, 80);
+  this.ctx.lineTo(602, 120);
   this.ctx.strokeStyle = "black";
   this.ctx.stroke();
   this.ctx.lineWidth = 2;
@@ -192,11 +212,11 @@ Game.prototype.checkPrimesInCols = function(bubblesToDelete){
             return a + (!!b ? 1 : 0);
           },0) > 1){
       for (var m = 0; m < this.grid[j].length; m++){
-
+        if (typeof this.grid[j][m] === "undefined") break;
         if (bubblesToDelete.findIndex(function(coord){
-           return coord.toString() === [m, j].toString();
+           return coord.toString() === [j, m].toString();
         }) === -1){
-           bubblesToDelete.push([m, j]);
+           bubblesToDelete.push([j, m]);
         }
       }
     }

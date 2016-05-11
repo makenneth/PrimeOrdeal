@@ -103,6 +103,8 @@
 				this.page = 2;
 			} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
 				this.page = 3;
+			}	else if (x >= 161 && x <= 246 && y >= 512 && y <= 545){
+				this.page = 2;
 			}
 		}
 	};
@@ -114,12 +116,12 @@
 	};
 	View.prototype.startScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
-		this.ctx.font = "64px Arial";
+		this.ctx.font = "64px Lato";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("PrimeOrdeal", 140, 400);
-		this.ctx.font = "36px Arial";
+		this.ctx.font = "36px Lato";
 		this.ctx.fillText("Start", 120, 100);
-		this.ctx.font = "36px Arial";
+		this.ctx.font = "36px Lato";
 		this.ctx.fillText("Instructions", 120, 150);
 	
 	}
@@ -129,17 +131,19 @@
 		}
 	};
 	View.prototype.loseScreen = function(int){
-		clearInterval(int);
 		this.ctx.clearRect(0, 0, 640, 800);
-	  this.ctx.font = "36px Arial";
+	  this.ctx.font = "36px Lato";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("YOU LOST!", 140, 140);
-		this.ctx.font = "36px Arial";
+		this.ctx.font = "36px Lato";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("Your score was:", 140, 340);
-		this.ctx.font = "36px Arial";
+		this.ctx.font = "36px Lato";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText(this.game.score, 140, 380);
+		this.ctx.font = "36px Lato";
+		this.ctx.fillStyle = "black";
+		this.ctx.fillText("Retry", 140, 520);
 	};
 	
 	module.exports = View;
@@ -179,7 +183,27 @@
 	};
 	
 	Game.prototype.updatePosition = function(e){
-	  this.currentBubble.moveX(e.which);
+	    var posY = this.currentBubble.pos_y,
+	        col = this.currentBubble.col;
+	        debugger;
+	    if (!this.currentBubble.autoFall){
+	    switch (e.which){
+	      case 32: 
+	        this.currentBubble.setAutoFall();
+	        break;
+	      case 37: 
+	        if (col >= 1 && posY < (750 - (this.grid[col - 1].pos_y * 60 + 30 + 30))){
+	          col--;
+	        }
+	        break;
+	      case 39:
+	        if (col <= 6 && posY < (750 - (this.grid[col + 1] * 60 + 30 + 30))){
+	          col++;
+	        }
+	        break;
+	    }  
+	  }
+	  // this.currentBubble.moveX(e.which);
 	};
 	
 	Game.prototype.addBubble = function(){
@@ -236,19 +260,19 @@
 	};
 	Game.prototype.drawText= function(){
 	  this.ctx.clearRect(0, 0, 640, 800);
-	  this.ctx.font = "36px Arial";
+	  this.ctx.font = "36px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText("PrimeOrdeal", 40, 60);
-	  this.ctx.font = "24px Arial";
+	  this.ctx.font = "24px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText("Score", 24, 280);
-	  this.ctx.font = "24px Arial";
+	  this.ctx.font = "24px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText(this.score, 44, 320);
-	  this.ctx.font = "20px Arial";
+	  this.ctx.font = "20px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText("Turns Left", 14, 520);
-	  this.ctx.font = "24px Arial";
+	  this.ctx.font = "24px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText(10 -this.turns, 44, 560);
 	}
@@ -257,10 +281,10 @@
 	  this.drawText();
 	  this.ctx.beginPath();
 	  this.ctx.lineWidth = 4;
-	  this.ctx.moveTo(118, 80);
+	  this.ctx.moveTo(118, 120);
 	  this.ctx.lineTo(118, 722);
 	  this.ctx.lineTo(602, 722);
-	  this.ctx.lineTo(602, 80);
+	  this.ctx.lineTo(602, 120);
 	  this.ctx.strokeStyle = "black";
 	  this.ctx.stroke();
 	  this.ctx.lineWidth = 2;
@@ -342,11 +366,11 @@
 	            return a + (!!b ? 1 : 0);
 	          },0) > 1){
 	      for (var m = 0; m < this.grid[j].length; m++){
-	
+	        if (typeof this.grid[j][m] === "undefined") break;
 	        if (bubblesToDelete.findIndex(function(coord){
-	           return coord.toString() === [m, j].toString();
+	           return coord.toString() === [j, m].toString();
 	        }) === -1){
-	           bubblesToDelete.push([m, j]);
+	           bubblesToDelete.push([j, m]);
 	        }
 	      }
 	    }
@@ -434,7 +458,7 @@
 	  this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
 	  this.ctx.fill();
 	  if (!this.hidden){
-	    this.ctx.font = "20px Arial";
+	    this.ctx.font = "20px Lato";
 	    this.ctx.strokeStyle = "white";
 	    this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
 	  }

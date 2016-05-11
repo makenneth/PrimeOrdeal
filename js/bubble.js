@@ -58,7 +58,7 @@ Bubble.prototype.draw = function(){
   this.ctx.arc(pos_x, this.pos_y, this.size, 0, 360);
   this.ctx.fill();
   if (!this.hidden){
-    this.ctx.font = "20px Arial";
+    this.ctx.font = "20px Lato";
     this.ctx.strokeStyle = "white";
     this.ctx.strokeText(this.value, pos_x - 5, this.pos_y + 5);
   }
