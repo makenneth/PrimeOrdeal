@@ -2,17 +2,21 @@ var Game = require('./game.js');
 
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(ctx, this.changePage.bind(this, 1)); //I could set difficulties, which takes in # of bubble to start with
+  this.game = new Game(ctx, this.changePage.bind(this, 1), this.pauseGame.bind(this)); //I could set difficulties, which takes in # of bubble to start with
   this.page = 1;
   this.paused = false;
   this.setUpListeners();
+};
+View.prototype.pauseGame = function(){
+	this.paused = this.paused === false ? true : false;
 };
 
 View.prototype.setUpListeners = function(){
   this.startBtn = document.getElementById("start"),
  	this.instructionBtn = document.getElementById("instruction"),
- 	this.retryBtn = document.getElementById("retry");
- 	this.backIcon = document.getElementById("back-icon");
+ 	this.retryBtn = document.getElementById("retry"),
+ 	this.backIcon = document.getElementById("back-icon"),
+ 	this.instructionText = document.getElementById("instruction-text");
  	this.backIcon.addEventListener("click", this.changePage.bind(this, 1));
   this.startBtn.addEventListener("click", this.changePage.bind(this, 2));
   this.retryBtn.addEventListener("click", this.changePage.bind(this, 1));
@@ -20,16 +24,28 @@ View.prototype.setUpListeners = function(){
 };
 
 
-View.prototype.changePage = function(page){
+View.prototype.changePage = function(page, e){
 	this.page = page;
+	if (e.target.id === "retry"){
+		this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
+	}
 	switch (page){
+		case 3:
+		  this.instructionText.className = "";
+			this.backIcon.className = "";
+			this.startBtn.className = "hidden";
+			this.instructionBtn.className = "hidden";
+			this.retryBtn.className = "hidden";
+			break;
 		case 2:
+			this.instructionText.className = "hidden";
 			this.backIcon.className = "";
 			this.startBtn.className = "hidden";
 			this.instructionBtn.className = "hidden";
 			this.retryBtn.className = "hidden";
 			break;
 		case 1:
+			this.instructionText.className = "hidden";
 			this.startBtn.className = "";
 			this.instructionBtn.className = "";
 			this.retryBtn.className = "hidden";
@@ -47,19 +63,25 @@ View.prototype.start = function() {
     		case 2:
     			this.gameScreen.call(this, intId);
     			break;
+    		case 3:
+    			this.instructionScreen();
+    			break;
     		case 5:
     		 this.loseScreen.call(this, intId);
     		 this.retryBtn.className = "";
+	 			this.retryBtn.disabled = false;
     			break;
     	}
     }.bind(this), 20);
 };
 
 View.prototype.gameScreen = function(intId){
-	  // this.game.move();
-    this.game.draw();
+		if (!this.paused){
+			    this.game.draw();
     this.game.moveBubble();
     this.hasWon(intId);
+		}
+
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
@@ -67,10 +89,15 @@ View.prototype.startScreen = function(){
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("PrimeOrdeal", 150, 300);
 }
+
+View.prototype.instructionScreen = function(){
+	this.ctx.clearRect(0, 0, 640, 800);
+
+};
+
 View.prototype.hasWon = function() {
 	if (this.game.lost()){
 		this.page = 5;
-		this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
 	}
 };
 View.prototype.loseScreen = function(){

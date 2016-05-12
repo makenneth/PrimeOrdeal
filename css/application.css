@@ -1,3 +1,8 @@
+body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
 #canvas {
   border: 10px solid green;
   border-radius: 10px;
@@ -6,7 +11,7 @@
 #back-icon {
   position: absolute;
   top: 20px;
-  left: 610px;
+  left: 600px;
 }
 
 #start, #instruction, #retry {
@@ -39,6 +44,24 @@
   background-color: #994c30;
   color: white;
 }
+#instruction-text {
+  position: absolute;
+  top: 200px;
+  left: 40px;
+
+  color: black;
+  width: 540px;
+  height: 500px;
+  font-size: 20px;
+    font-family: lato, sans-serif;
+
+}
+#instruction-text li {
+  margin-left: 20px;
+} 
+#instruction-text p {
+  margin-bottom: 50px;
+} 
 .hidden {
   display: none;
 }

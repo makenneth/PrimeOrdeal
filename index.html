@@ -13,11 +13,26 @@
 	<canvas width="640px" height="760px" id="canvas"></canvas>
 	<div style="display: none;">
   <img id="source" src="./images/marbles.png"
-       width="100" height="auto">
+       width="100" height="auto"/>
 	</div>
 	<img id="back-icon" src="./images/arrow-back.png" width="50px" height="auto" class="hidden"/>
 	<button id="start">Start Game</button>
 	<button id="instruction">Instructions</button>
 	<button id="retry" class="hidden">Retry</button>
+	<div id="instruction-text" class="hidden">	
+		<p>Warning.. This game involves addition.</p>
+		<p>It is an ordeal of prime numbers!
+			 Bubble will keep falling from the sky.
+			 Your task is to clear ball as quickly as you can. 
+			 You have seven turns to clear ball before more hidden ball fall from the sky!</p>
+		<ul>Controls: 
+			<li>Use &larr; and &rarr; key to control the movement</li>
+			<li>Use spacebar to drop ball quickly</li>
+		</ul>
+		<ol>To clear ball: 
+			<li>Balls can be clear if a series of two or more balls next to each other sum up to a prime.</li>
+			<li>When there is a hidden ball in the column, sum of prime in columns cannot cancel out .</li>
+		</ol>
+	</div>
 </body>
 </html>

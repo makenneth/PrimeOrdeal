@@ -1,11 +1,12 @@
 var Bubble = require('./bubble.js'),
     Layout = require('../layout.js');
-var Game = function(ctx, backFn){
+var Game = function(ctx, backFn, pauseFn){
   this.ctx = ctx;
   this.grid = Array.from(Array(8), function(spot){
     return Array.from(Array(10));
   }); 
   this.backFn = backFn;
+  this.pauseFn = pauseFn;
   this.bubbles = [];
   this.primes = [2, 3, 5, 7, 11,
                 13, 17, 19, 23, 
@@ -18,10 +19,12 @@ var Game = function(ctx, backFn){
   this.dropHiddenBubbles();
   this.currentBubble = this.addBubble();
   $(document).on("keydown", this.updatePosition.bind(this));
+  $(document).on("click", this.pauseFn);
 };
+
 Game.prototype.updateScore = function(numOfBubbles){
   if (numOfBubbles === 0) return;
-  this.score += 2 * Math.pow(2, 2 * numOfBubbles - 1);
+  this.score += numOfBubbles > 7 ? 7 : 2 * Math.pow(2, 2 * numOfBubbles - 1);
 };
 
 Game.prototype.updatePosition = function(e){
