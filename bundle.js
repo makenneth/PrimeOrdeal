@@ -59,12 +59,23 @@
 	var Game = __webpack_require__(2);
 	var View = function(ctx){
 	  this.ctx = ctx;
-	  this.game = new Game(ctx); //I could set difficulties, which takes in # of bubble to start with
+	  this.game = new Game(ctx, this.back.bind(this)); //I could set difficulties, which takes in # of bubble to start with
 	  this.page = 1;
+	  this.paused = false;
 	  document.addEventListener("click", this.findMousePos.bind(this));
 	  document.onmousemove = this.moveMouse.bind(this);
 	};
 	
+	View.prototype.togglePause = function(){
+		if (this.paused){
+			this.paused = false;
+		} else {
+			this.paused = true;
+		}
+	};
+	View.prototype.back = function(){
+		this.page = 1;
+	};
 	View.prototype.start = function() {
 	    var intId = setInterval(function(){
 	    	switch (this.page){
@@ -110,9 +121,11 @@
 	};
 	View.prototype.gameScreen = function(intId){
 		  // this.game.move();
-	    this.game.draw();
-	    this.game.moveBubble();
-	    this.hasWon(intId);
+		  if (!this.paused){
+		    this.game.draw();
+		    this.game.moveBubble();
+		    this.hasWon(intId);
+		  }
 	};
 	View.prototype.startScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
@@ -153,11 +166,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Bubble = __webpack_require__(3);
-	var Game = function(ctx){
+	var Game = function(ctx, backFn){
 	  this.ctx = ctx;
 	  this.grid = Array.from(Array(8), function(spot){
 	    return Array.from(Array(10));
 	  }); 
+	  this.backFn = backFn;
 	  this.bubbles = [];
 	  this.primes = [2, 3, 5, 7, 11,
 	                13, 17, 19, 23, 
@@ -172,6 +186,7 @@
 	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
+	  $("#pause").on("click", this.backFn);
 	  setInterval(this.incrementTime.bind(this), 10);
 	};
 	Game.prototype.updateScore = function(numOfBubbles){
@@ -266,13 +281,14 @@
 	  this.ctx.fillText("Score", 24, 280);
 	  this.ctx.font = "24px Lato";
 	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText(this.score, 44, 320);
+	  var textWidth = this.ctx.measureText(this.score).width;
+	  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
 	  this.ctx.font = "20px Lato";
 	  this.ctx.fillStyle = "black";
 	  this.ctx.fillText("Turns Left", 14, 520);
 	  this.ctx.font = "24px Lato";
 	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText(10 -this.turns, 44, 560);
+	  this.ctx.fillText(7 - this.turns, 44, 560);
 	}
 	
 	Game.prototype.draw = function(){
@@ -287,7 +303,7 @@
 	  this.ctx.stroke();
 	  this.ctx.lineWidth = 2;
 	  this.ctx.fillStyle = "black";
-	  if (this.turns === 10){
+	  if (this.turns === 7){
 	    this.turns = 0;
 	    this.dropHiddenBubbles();
 	  }
@@ -309,7 +325,8 @@
 	      }
 	      currentSum += this.grid[j][i].value;
 	
-	      if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"){
+	      if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"
+	          || this.grid[j + 1][i].hidden){
 	        if ((j - startPoint) > 0 && this.primes.indexOf(currentSum) > -1){
 	          for (var m = startPoint; m <= j; m++){
 	            bubblesToDelete.push([m, i]);
@@ -327,10 +344,10 @@
 	  var coords = coords.sort(function(a,b){
 	    return b[1] - a[1];
 	  }); 
-	  //so I can shift bubble from the top down,
-	  //not having to worry about
-	  coords.forEach(function(coord){
-	    var currentBubble = this.grid[coord[0]][coord[1]];
+	
+	  for (var i = 0; i < coords.length; i++){
+	    var coord = coords[i], 
+	    currentBubble = this.grid[coord[0]][coord[1]];
 	    var idx = this.bubbles.findIndex(function(bubble){
 	      return bubble.isEqual(currentBubble);
 	    });
@@ -342,7 +359,7 @@
 	      this.grid[coord[0]].push(undefined);
 	      this.bubbles.splice(idx, 1);
 	    }
-	  }.bind(this));
+	  }
 	};
 	
 	Game.prototype.unveilSurroundings = function(col, row){
@@ -365,6 +382,7 @@
 	          },0) > 1){
 	      for (var m = 0; m < this.grid[j].length; m++){
 	        if (typeof this.grid[j][m] === "undefined") break;
+	
 	        if (bubblesToDelete.findIndex(function(coord){
 	           return coord.toString() === [j, m].toString();
 	        }) === -1){

@@ -1,12 +1,23 @@
 var Game = require('./game.js');
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(ctx); //I could set difficulties, which takes in # of bubble to start with
+  this.game = new Game(ctx, this.back.bind(this)); //I could set difficulties, which takes in # of bubble to start with
   this.page = 1;
+  this.paused = false;
   document.addEventListener("click", this.findMousePos.bind(this));
   document.onmousemove = this.moveMouse.bind(this);
 };
 
+View.prototype.togglePause = function(){
+	if (this.paused){
+		this.paused = false;
+	} else {
+		this.paused = true;
+	}
+};
+View.prototype.back = function(){
+	this.page = 1;
+};
 View.prototype.start = function() {
     var intId = setInterval(function(){
     	switch (this.page){
@@ -52,9 +63,11 @@ View.prototype.findMousePos = function(event){
 };
 View.prototype.gameScreen = function(intId){
 	  // this.game.move();
-    this.game.draw();
-    this.game.moveBubble();
-    this.hasWon(intId);
+	  if (!this.paused){
+	    this.game.draw();
+	    this.game.moveBubble();
+	    this.hasWon(intId);
+	  }
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);

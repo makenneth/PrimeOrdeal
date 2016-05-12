@@ -1,9 +1,10 @@
 var Bubble = require('./bubble.js');
-var Game = function(ctx){
+var Game = function(ctx, backFn){
   this.ctx = ctx;
   this.grid = Array.from(Array(8), function(spot){
     return Array.from(Array(10));
   }); 
+  this.backFn = backFn;
   this.bubbles = [];
   this.primes = [2, 3, 5, 7, 11,
                 13, 17, 19, 23, 
@@ -18,6 +19,7 @@ var Game = function(ctx){
   this.dropHiddenBubbles();
   this.currentBubble = this.addBubble();
   $(document).on("keydown", this.updatePosition.bind(this));
+  $("#pause").on("click", this.backFn);
   setInterval(this.incrementTime.bind(this), 10);
 };
 Game.prototype.updateScore = function(numOfBubbles){
@@ -112,13 +114,14 @@ Game.prototype.drawText= function(){
   this.ctx.fillText("Score", 24, 280);
   this.ctx.font = "24px Lato";
   this.ctx.fillStyle = "black";
-  this.ctx.fillText(this.score, 44, 320);
+  var textWidth = this.ctx.measureText(this.score).width;
+  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
   this.ctx.font = "20px Lato";
   this.ctx.fillStyle = "black";
   this.ctx.fillText("Turns Left", 14, 520);
   this.ctx.font = "24px Lato";
   this.ctx.fillStyle = "black";
-  this.ctx.fillText(10 -this.turns, 44, 560);
+  this.ctx.fillText(7 - this.turns, 44, 560);
 }
 
 Game.prototype.draw = function(){
@@ -133,7 +136,7 @@ Game.prototype.draw = function(){
   this.ctx.stroke();
   this.ctx.lineWidth = 2;
   this.ctx.fillStyle = "black";
-  if (this.turns === 10){
+  if (this.turns === 7){
     this.turns = 0;
     this.dropHiddenBubbles();
   }
@@ -155,7 +158,8 @@ Game.prototype.checkPrimesInRows = function(){
       }
       currentSum += this.grid[j][i].value;
 
-      if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"){
+      if (j === (this.grid.length - 1) || typeof this.grid[j + 1][i] === "undefined"
+          || this.grid[j + 1][i].hidden){
         if ((j - startPoint) > 0 && this.primes.indexOf(currentSum) > -1){
           for (var m = startPoint; m <= j; m++){
             bubblesToDelete.push([m, i]);
@@ -173,10 +177,10 @@ Game.prototype.deleteBubbles = function(coords){
   var coords = coords.sort(function(a,b){
     return b[1] - a[1];
   }); 
-  //so I can shift bubble from the top down,
-  //not having to worry about
-  coords.forEach(function(coord){
-    var currentBubble = this.grid[coord[0]][coord[1]];
+
+  for (var i = 0; i < coords.length; i++){
+    var coord = coords[i], 
+    currentBubble = this.grid[coord[0]][coord[1]];
     var idx = this.bubbles.findIndex(function(bubble){
       return bubble.isEqual(currentBubble);
     });
@@ -188,7 +192,7 @@ Game.prototype.deleteBubbles = function(coords){
       this.grid[coord[0]].push(undefined);
       this.bubbles.splice(idx, 1);
     }
-  }.bind(this));
+  }
 };
 
 Game.prototype.unveilSurroundings = function(col, row){
@@ -211,6 +215,7 @@ Game.prototype.checkPrimesInCols = function(bubblesToDelete){
           },0) > 1){
       for (var m = 0; m < this.grid[j].length; m++){
         if (typeof this.grid[j][m] === "undefined") break;
+
         if (bubblesToDelete.findIndex(function(coord){
            return coord.toString() === [j, m].toString();
         }) === -1){
