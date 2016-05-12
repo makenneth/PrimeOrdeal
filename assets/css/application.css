@@ -5,9 +5,9 @@ body {
 }
 #credit {
   position: absolute;
-  top: 715px;
-  left: 590px;
-  width: 50px;
+  top: 705px;
+  left: 15px;
+  width: 60px;
   cursor: pointer;
 }
 
