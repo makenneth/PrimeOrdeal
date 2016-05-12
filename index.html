@@ -2,22 +2,22 @@
 <html>
 <head>
 	<title>PrimeOrdeal</title>
+<link href='https://fonts.googleapis.com/css?family=Handlee' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
 	<script src="./bundle.js"></script>
-	<style type="text/css">
-		#canvas {
-			border: 10px solid green;
-			border-radius: 10px;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="./css/application.css">
+
 </head>
 <body>
 	<canvas width="640px" height="760px" id="canvas"></canvas>
-	<div style="display:none;">
-  <img id="source" src="./marbles.png"
+	<div style="display: none;">
+  <img id="source" src="./images/marbles.png"
        width="100" height="auto">
 	</div>
-	<img id="pause" src="./arrow-back.png" width="50px" height="auto" />
+	<img id="back-icon" src="./images/arrow-back.png" width="50px" height="auto" class="hidden"/>
+	<button id="start">Start Game</button>
+	<button id="instruction">Instructions</button>
+	<button id="retry" class="hidden">Retry</button>
 </body>
 </html>

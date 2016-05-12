@@ -11,25 +11,6 @@ var Bubble = function(ctx, col, speed, value, autoFall, hidden){
   this.image = document.getElementById("source");
 };
 
-Bubble.prototype.moveX = function(keyCode){
-  if (!this.autoFall){
-    switch (keyCode){
-      case 32: 
-        this.setAutoFall();
-        break;
-      case 37: 
-        if (this.col >= 1){
-          this.col--;
-        }
-        break;
-      case 39:
-        if (this.col <= 6){
-          this.col++;
-        }
-        break;
-    }  
-  }
-}
 Bubble.color = function(value){
   switch(value){
     case 2:

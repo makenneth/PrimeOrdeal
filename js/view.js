@@ -1,23 +1,43 @@
 var Game = require('./game.js');
+
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(ctx, this.back.bind(this)); //I could set difficulties, which takes in # of bubble to start with
+  this.game = new Game(ctx, this.changePage.bind(this, 1)); //I could set difficulties, which takes in # of bubble to start with
   this.page = 1;
   this.paused = false;
-  document.addEventListener("click", this.findMousePos.bind(this));
-  document.onmousemove = this.moveMouse.bind(this);
+  this.setUpListeners();
 };
 
-View.prototype.togglePause = function(){
-	if (this.paused){
-		this.paused = false;
-	} else {
-		this.paused = true;
-	}
+View.prototype.setUpListeners = function(){
+  this.startBtn = document.getElementById("start"),
+ 	this.instructionBtn = document.getElementById("instruction"),
+ 	this.retryBtn = document.getElementById("retry");
+ 	this.backIcon = document.getElementById("back-icon");
+ 	this.backIcon.addEventListener("click", this.changePage.bind(this, 1));
+  this.startBtn.addEventListener("click", this.changePage.bind(this, 2));
+  this.retryBtn.addEventListener("click", this.changePage.bind(this, 1));
+  this.instructionBtn.addEventListener("click", this.changePage.bind(this, 3));
 };
-View.prototype.back = function(){
-	this.page = 1;
+
+
+View.prototype.changePage = function(page){
+	this.page = page;
+	switch (page){
+		case 2:
+			this.backIcon.className = "";
+			this.startBtn.className = "hidden";
+			this.instructionBtn.className = "hidden";
+			this.retryBtn.className = "hidden";
+			break;
+		case 1:
+			this.startBtn.className = "";
+			this.instructionBtn.className = "";
+			this.retryBtn.className = "hidden";
+			this.backIcon.className = "hidden";
+			break;
+		}
 };
+
 View.prototype.start = function() {
     var intId = setInterval(function(){
     	switch (this.page){
@@ -29,63 +49,31 @@ View.prototype.start = function() {
     			break;
     		case 5:
     		 this.loseScreen.call(this, intId);
+    		 this.retryBtn.className = "";
     			break;
     	}
     }.bind(this), 20);
 };
-View.prototype.moveMouse = function(event){
-		if (this.page === 1){
-		var x = event.pageX,
-				y = event.pageY;
-		if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
-			this.ctx.beginPath();
-			this.ctx.rect(114, 64, 93, 50);
-			this.ctx.stroke();
-		} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
-			this.ctx.beginPath();
-			this.ctx.rect(105, 110, 220, 55);
-			this.ctx.stroke();
-		}
-	}
-};
-View.prototype.findMousePos = function(event){
-	if (this.page === 1){
-		var x = event.pageX,
-				y = event.pageY;
-		if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
-			this.page = 2;
-		} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
-			this.page = 3;
-		}	else if (x >= 161 && x <= 246 && y >= 512 && y <= 545){
-			this.page = 2;
-		}
-	}
-};
+
 View.prototype.gameScreen = function(intId){
 	  // this.game.move();
-	  if (!this.paused){
-	    this.game.draw();
-	    this.game.moveBubble();
-	    this.hasWon(intId);
-	  }
+    this.game.draw();
+    this.game.moveBubble();
+    this.hasWon(intId);
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
-	this.ctx.font = "64px Lato";
+	this.ctx.font = "64px Handlee";
 	this.ctx.fillStyle = "black";
-	this.ctx.fillText("PrimeOrdeal", 140, 400);
-	this.ctx.font = "36px Lato";
-	this.ctx.fillText("Start", 120, 100);
-	this.ctx.font = "36px Lato";
-	this.ctx.fillText("Instructions", 120, 150);
-
+	this.ctx.fillText("PrimeOrdeal", 150, 300);
 }
 View.prototype.hasWon = function() {
 	if (this.game.lost()){
 		this.page = 5;
+		this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
 	}
 };
-View.prototype.loseScreen = function(int){
+View.prototype.loseScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
   this.ctx.font = "36px Lato";
 	this.ctx.fillStyle = "black";
@@ -96,9 +84,6 @@ View.prototype.loseScreen = function(int){
 	this.ctx.font = "36px Lato";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText(this.game.score, 140, 380);
-	this.ctx.font = "36px Lato";
-	this.ctx.fillStyle = "black";
-	this.ctx.fillText("Retry", 140, 520);
 };
 
 module.exports = View;

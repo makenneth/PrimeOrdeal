@@ -1,0 +1,44 @@
+#canvas {
+  border: 10px solid green;
+  border-radius: 10px;
+}
+
+#back-icon {
+  position: absolute;
+  top: 20px;
+  left: 610px;
+}
+
+#start, #instruction, #retry {
+  position: absolute;
+  font-family: lato, sans-serif;
+  font-size: 32px;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: coral;
+  min-width: 200px;
+}
+#retry {
+  top: 500px;
+  left: 240px;
+}
+#start {
+  top: 430px;
+  left: 240px;
+}
+#instruction {
+  top: 500px;
+  left: 240px;
+}
+#start:hover {
+  background-color: #994c30;
+  color: white;
+}
+#instruction:hover {
+  background-color: #994c30;
+  color: white;
+}
+.hidden {
+  display: none;
+}

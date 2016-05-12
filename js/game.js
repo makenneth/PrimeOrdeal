@@ -1,4 +1,5 @@
-var Bubble = require('./bubble.js');
+var Bubble = require('./bubble.js'),
+    Layout = require('../layout.js');
 var Game = function(ctx, backFn){
   this.ctx = ctx;
   this.grid = Array.from(Array(8), function(spot){
@@ -11,23 +12,16 @@ var Game = function(ctx, backFn){
                 29, 31, 33, 37, 41, 
                 43, 47, 53, 59, 61, 
                 67, 71];
-  
   this.colSums = Array.from(Array(8), function(_){return 0;});
-  this.timeElapsed = 0;
   this.turns = 0; 
   this.score = 0;
   this.dropHiddenBubbles();
   this.currentBubble = this.addBubble();
   $(document).on("keydown", this.updatePosition.bind(this));
-  $("#pause").on("click", this.backFn);
-  setInterval(this.incrementTime.bind(this), 10);
 };
 Game.prototype.updateScore = function(numOfBubbles){
   if (numOfBubbles === 0) return;
   this.score += 2 * Math.pow(2, 2 * numOfBubbles - 1);
-};
-Game.prototype.incrementTime = function(){
-  this.timeElapsed++;
 };
 
 Game.prototype.updatePosition = function(e){
@@ -75,7 +69,7 @@ Game.prototype.moveBubble = function(){
     this.turns++;
     this.checkPrimesInRows();
   } else {
-    this.currentBubble.fall(); //check every bubble if they're where they're supposed to be
+    this.currentBubble.fall(); 
   }
 
   for (var i = 0; i < this.grid.length; i++){
@@ -97,45 +91,19 @@ Game.prototype.dropHiddenBubbles = function(){
   this.grid.forEach(function(col, idx){
     var randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7;
     var newBubble = new Bubble(this.ctx, idx, 10, randomNum, true, true);
-    col[col.indexOf(undefined)] = newBubble;//index of looks for the first item that is undefined
+    col[col.indexOf(undefined)] = newBubble;
     this.colSums[idx] += randomNum;
     this.bubbles.push(newBubble);
   }.bind(this));
 
  //add sum to col
 };
-Game.prototype.drawText= function(){
-  this.ctx.clearRect(0, 0, 640, 800);
-  this.ctx.font = "36px Lato";
-  this.ctx.fillStyle = "black";
-  this.ctx.fillText("PrimeOrdeal", 40, 60);
-  this.ctx.font = "24px Lato";
-  this.ctx.fillStyle = "black";
-  this.ctx.fillText("Score", 24, 280);
-  this.ctx.font = "24px Lato";
-  this.ctx.fillStyle = "black";
-  var textWidth = this.ctx.measureText(this.score).width;
-  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
-  this.ctx.font = "20px Lato";
-  this.ctx.fillStyle = "black";
-  this.ctx.fillText("Turns Left", 14, 520);
-  this.ctx.font = "24px Lato";
-  this.ctx.fillStyle = "black";
-  this.ctx.fillText(7 - this.turns, 44, 560);
-}
 
 Game.prototype.draw = function(){
-  this.drawText();
-  this.ctx.beginPath();
-  this.ctx.lineWidth = 4;
-  this.ctx.moveTo(118, 120);
-  this.ctx.lineTo(118, 722);
-  this.ctx.lineTo(602, 722);
-  this.ctx.lineTo(602, 120);
-  this.ctx.strokeStyle = "black";
-  this.ctx.stroke();
-  this.ctx.lineWidth = 2;
-  this.ctx.fillStyle = "black";
+  this.ctx.clearRect(0, 0, 640, 800);
+  Layout.drawText.apply(this);
+  Layout.drawFrame.apply(this);
+
   if (this.turns === 7){
     this.turns = 0;
     this.dropHiddenBubbles();

@@ -57,25 +57,45 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(2);
+	
 	var View = function(ctx){
 	  this.ctx = ctx;
-	  this.game = new Game(ctx, this.back.bind(this)); //I could set difficulties, which takes in # of bubble to start with
+	  this.game = new Game(ctx, this.changePage.bind(this, 1)); //I could set difficulties, which takes in # of bubble to start with
 	  this.page = 1;
 	  this.paused = false;
-	  document.addEventListener("click", this.findMousePos.bind(this));
-	  document.onmousemove = this.moveMouse.bind(this);
+	  this.setUpListeners();
 	};
 	
-	View.prototype.togglePause = function(){
-		if (this.paused){
-			this.paused = false;
-		} else {
-			this.paused = true;
-		}
+	View.prototype.setUpListeners = function(){
+	  this.startBtn = document.getElementById("start"),
+	 	this.instructionBtn = document.getElementById("instruction"),
+	 	this.retryBtn = document.getElementById("retry");
+	 	this.backIcon = document.getElementById("back-icon");
+	 	this.backIcon.addEventListener("click", this.changePage.bind(this, 1));
+	  this.startBtn.addEventListener("click", this.changePage.bind(this, 2));
+	  this.retryBtn.addEventListener("click", this.changePage.bind(this, 1));
+	  this.instructionBtn.addEventListener("click", this.changePage.bind(this, 3));
 	};
-	View.prototype.back = function(){
-		this.page = 1;
+	
+	
+	View.prototype.changePage = function(page){
+		this.page = page;
+		switch (page){
+			case 2:
+				this.backIcon.className = "";
+				this.startBtn.className = "hidden";
+				this.instructionBtn.className = "hidden";
+				this.retryBtn.className = "hidden";
+				break;
+			case 1:
+				this.startBtn.className = "";
+				this.instructionBtn.className = "";
+				this.retryBtn.className = "hidden";
+				this.backIcon.className = "hidden";
+				break;
+			}
 	};
+	
 	View.prototype.start = function() {
 	    var intId = setInterval(function(){
 	    	switch (this.page){
@@ -87,63 +107,31 @@
 	    			break;
 	    		case 5:
 	    		 this.loseScreen.call(this, intId);
+	    		 this.retryBtn.className = "";
 	    			break;
 	    	}
 	    }.bind(this), 20);
 	};
-	View.prototype.moveMouse = function(event){
-			if (this.page === 1){
-			var x = event.pageX,
-					y = event.pageY;
-			if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
-				this.ctx.beginPath();
-				this.ctx.rect(114, 64, 93, 50);
-				this.ctx.stroke();
-			} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
-				this.ctx.beginPath();
-				this.ctx.rect(105, 110, 220, 55);
-				this.ctx.stroke();
-			}
-		}
-	};
-	View.prototype.findMousePos = function(event){
-		if (this.page === 1){
-			var x = event.pageX,
-					y = event.pageY;
-			if (x >= 154 && x <= 227 && y <= 116 && y >= 86){
-				this.page = 2;
-			} else if (x >= 136 && x <= 316 && y >= 131 && y <= 171){
-				this.page = 3;
-			}	else if (x >= 161 && x <= 246 && y >= 512 && y <= 545){
-				this.page = 2;
-			}
-		}
-	};
+	
 	View.prototype.gameScreen = function(intId){
 		  // this.game.move();
-		  if (!this.paused){
-		    this.game.draw();
-		    this.game.moveBubble();
-		    this.hasWon(intId);
-		  }
+	    this.game.draw();
+	    this.game.moveBubble();
+	    this.hasWon(intId);
 	};
 	View.prototype.startScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
-		this.ctx.font = "64px Lato";
+		this.ctx.font = "64px Handlee";
 		this.ctx.fillStyle = "black";
-		this.ctx.fillText("PrimeOrdeal", 140, 400);
-		this.ctx.font = "36px Lato";
-		this.ctx.fillText("Start", 120, 100);
-		this.ctx.font = "36px Lato";
-		this.ctx.fillText("Instructions", 120, 150);
-	
+		this.ctx.fillText("PrimeOrdeal", 150, 300);
 	}
 	View.prototype.hasWon = function() {
 		if (this.game.lost()){
 			this.page = 5;
+			this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
 		}
 	};
-	View.prototype.loseScreen = function(int){
+	View.prototype.loseScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
 	  this.ctx.font = "36px Lato";
 		this.ctx.fillStyle = "black";
@@ -154,9 +142,6 @@
 		this.ctx.font = "36px Lato";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText(this.game.score, 140, 380);
-		this.ctx.font = "36px Lato";
-		this.ctx.fillStyle = "black";
-		this.ctx.fillText("Retry", 140, 520);
 	};
 	
 	module.exports = View;
@@ -165,7 +150,8 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Bubble = __webpack_require__(3);
+	var Bubble = __webpack_require__(3),
+	    Layout = __webpack_require__(4);
 	var Game = function(ctx, backFn){
 	  this.ctx = ctx;
 	  this.grid = Array.from(Array(8), function(spot){
@@ -178,23 +164,16 @@
 	                29, 31, 33, 37, 41, 
 	                43, 47, 53, 59, 61, 
 	                67, 71];
-	  
 	  this.colSums = Array.from(Array(8), function(_){return 0;});
-	  this.timeElapsed = 0;
 	  this.turns = 0; 
 	  this.score = 0;
 	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
-	  $("#pause").on("click", this.backFn);
-	  setInterval(this.incrementTime.bind(this), 10);
 	};
 	Game.prototype.updateScore = function(numOfBubbles){
 	  if (numOfBubbles === 0) return;
 	  this.score += 2 * Math.pow(2, 2 * numOfBubbles - 1);
-	};
-	Game.prototype.incrementTime = function(){
-	  this.timeElapsed++;
 	};
 	
 	Game.prototype.updatePosition = function(e){
@@ -242,7 +221,7 @@
 	    this.turns++;
 	    this.checkPrimesInRows();
 	  } else {
-	    this.currentBubble.fall(); //check every bubble if they're where they're supposed to be
+	    this.currentBubble.fall(); 
 	  }
 	
 	  for (var i = 0; i < this.grid.length; i++){
@@ -264,45 +243,19 @@
 	  this.grid.forEach(function(col, idx){
 	    var randomNum = (Math.random() * 7) <= 6 ? Math.ceil(Math.random() * 5 + 1) : 7;
 	    var newBubble = new Bubble(this.ctx, idx, 10, randomNum, true, true);
-	    col[col.indexOf(undefined)] = newBubble;//index of looks for the first item that is undefined
+	    col[col.indexOf(undefined)] = newBubble;
 	    this.colSums[idx] += randomNum;
 	    this.bubbles.push(newBubble);
 	  }.bind(this));
 	
 	 //add sum to col
 	};
-	Game.prototype.drawText= function(){
-	  this.ctx.clearRect(0, 0, 640, 800);
-	  this.ctx.font = "36px Lato";
-	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText("PrimeOrdeal", 40, 60);
-	  this.ctx.font = "24px Lato";
-	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText("Score", 24, 280);
-	  this.ctx.font = "24px Lato";
-	  this.ctx.fillStyle = "black";
-	  var textWidth = this.ctx.measureText(this.score).width;
-	  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
-	  this.ctx.font = "20px Lato";
-	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText("Turns Left", 14, 520);
-	  this.ctx.font = "24px Lato";
-	  this.ctx.fillStyle = "black";
-	  this.ctx.fillText(7 - this.turns, 44, 560);
-	}
 	
 	Game.prototype.draw = function(){
-	  this.drawText();
-	  this.ctx.beginPath();
-	  this.ctx.lineWidth = 4;
-	  this.ctx.moveTo(118, 120);
-	  this.ctx.lineTo(118, 722);
-	  this.ctx.lineTo(602, 722);
-	  this.ctx.lineTo(602, 120);
-	  this.ctx.strokeStyle = "black";
-	  this.ctx.stroke();
-	  this.ctx.lineWidth = 2;
-	  this.ctx.fillStyle = "black";
+	  this.ctx.clearRect(0, 0, 640, 800);
+	  Layout.drawText.apply(this);
+	  Layout.drawFrame.apply(this);
+	
 	  if (this.turns === 7){
 	    this.turns = 0;
 	    this.dropHiddenBubbles();
@@ -427,25 +380,6 @@
 	  this.image = document.getElementById("source");
 	};
 	
-	Bubble.prototype.moveX = function(keyCode){
-	  if (!this.autoFall){
-	    switch (keyCode){
-	      case 32: 
-	        this.setAutoFall();
-	        break;
-	      case 37: 
-	        if (this.col >= 1){
-	          this.col--;
-	        }
-	        break;
-	      case 39:
-	        if (this.col <= 6){
-	          this.col++;
-	        }
-	        break;
-	    }  
-	  }
-	}
 	Bubble.color = function(value){
 	  switch(value){
 	    case 2:
@@ -500,6 +434,43 @@
 	};
 	
 	module.exports = Bubble;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		drawText: function(){
+			this.ctx.font = "36px Lato";
+		  this.ctx.fillStyle = "black";
+		  this.ctx.fillText("PrimeOrdeal", 40, 60);
+		  this.ctx.font = "24px Lato";
+		  this.ctx.fillStyle = "black";
+		  this.ctx.fillText("Score", 24, 280);
+		  this.ctx.font = "24px Lato";
+		  this.ctx.fillStyle = "black";
+		  var textWidth = this.ctx.measureText(this.score).width;
+		  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
+		  this.ctx.font = "20px Lato";
+		  this.ctx.fillStyle = "black";
+		  this.ctx.fillText("Turns Left", 14, 520);
+		  this.ctx.font = "24px Lato";
+		  this.ctx.fillStyle = "black";
+		  this.ctx.fillText(7 - this.turns, 44, 560);
+		},
+		drawFrame: function(){
+			this.ctx.beginPath();
+		  this.ctx.lineWidth = 4;
+		  this.ctx.moveTo(118, 120);
+		  this.ctx.lineTo(118, 722);
+		  this.ctx.lineTo(602, 722);
+		  this.ctx.lineTo(602, 120);
+		  this.ctx.strokeStyle = "black";
+		  this.ctx.stroke();
+		  this.ctx.lineWidth = 2;
+		  this.ctx.fillStyle = "black";
+		}
+	}
 
 /***/ }
 /******/ ]);
