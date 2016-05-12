@@ -1,5 +1,5 @@
 # [PrimeOrdeal][link]
-[link]: http://www.primeordeal.online
+[link]: http://makenneth.github.io/PrimeOrdeal/
 
 
 ## Goal
