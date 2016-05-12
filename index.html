@@ -6,16 +6,16 @@
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 	<script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
 	<script src="./bundle.js"></script>
-	<link rel="stylesheet" type="text/css" href="./css/application.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/application.css">
 
 </head>
 <body>
 	<canvas width="640px" height="760px" id="canvas"></canvas>
 	<div style="display: none;">
-  <img id="source" src="./images/marbles.png"
+  <img id="source" src="./assets/images/marbles.png"
        width="100" height="auto"/>
 	</div>
-	<img id="back-icon" src="./images/arrow-back.png" width="50px" height="auto" class="hidden"/>
+	<img id="back-icon" src="./assets/images/arrow-back.png" width="50px" height="auto" class="hidden"/>
 	<button id="start">Start Game</button>
 	<button id="instruction">Instructions</button>
 	<button id="retry" class="hidden">Retry</button>
@@ -33,6 +33,15 @@
 			<li>Balls can be clear if a series of two or more balls next to each other sum up to a prime.</li>
 			<li>When there is a hidden ball in the column, sum of prime in columns cannot cancel out .</li>
 		</ol>
+		<div class="examples">
+			<img src="./assets/images/example1.png">
+			<img src="./assets/images/example2.png">
+			<img src="./assets/images/example3.png">
+		</div>
+	</div>
+
+	<div id="credit">
+		<a href="https://github.com/makenneth/PrimeOrdeal"><img class="git" src="./assets/images/github.png" width="50px" height"50px"/><img class="git-hover" src="./assets/images/github-hover.png" width="50px" height="50px"/></a>
 	</div>
 </body>
 </html>

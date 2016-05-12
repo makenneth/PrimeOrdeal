@@ -14,4 +14,7 @@ You have seven turns to clear bubbles before more hidden bubbles fall from the s
 - Tap on &larr;  &rarr; to decide where the ball should be dropped.
 - Tap space to drop a ball quickly
 
+![Example1](./assets/images/example1.png)
+![Example2](./assets/images/example2.png)
+![Example3](./assets/images/example3.png)
 

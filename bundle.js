@@ -60,13 +60,9 @@
 	
 	var View = function(ctx){
 	  this.ctx = ctx;
-	  this.game = new Game(ctx, this.changePage.bind(this, 1), this.pauseGame.bind(this)); //I could set difficulties, which takes in # of bubble to start with
+	  this.game = new Game(ctx, this.changePage.bind(this, 1)); //I could set difficulties, which takes in # of bubble to start with
 	  this.page = 1;
-	  this.paused = false;
 	  this.setUpListeners();
-	};
-	View.prototype.pauseGame = function(){
-		this.paused = this.paused === false ? true : false;
 	};
 	
 	View.prototype.setUpListeners = function(){
@@ -84,7 +80,7 @@
 	
 	View.prototype.changePage = function(page, e){
 		this.page = page;
-		if (e.target.id === "retry"){
+		if (e.target.id === "retry" || e.target.id ==="back-icon"){
 			this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
 		}
 		switch (page){
@@ -134,11 +130,10 @@
 	};
 	
 	View.prototype.gameScreen = function(intId){
-			if (!this.paused){
-				    this.game.draw();
+			this.game.draw();
 	    this.game.moveBubble();
 	    this.hasWon(intId);
-			}
+	
 	
 	};
 	View.prototype.startScreen = function(){
@@ -178,14 +173,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Bubble = __webpack_require__(3),
-	    Layout = __webpack_require__(4);
+	    Layout = __webpack_require__(5);
 	var Game = function(ctx, backFn, pauseFn){
 	  this.ctx = ctx;
 	  this.grid = Array.from(Array(8), function(spot){
 	    return Array.from(Array(10));
 	  }); 
 	  this.backFn = backFn;
-	  this.pauseFn = pauseFn;
 	  this.bubbles = [];
 	  this.primes = [2, 3, 5, 7, 11,
 	                13, 17, 19, 23, 
@@ -198,7 +192,6 @@
 	  this.dropHiddenBubbles();
 	  this.currentBubble = this.addBubble();
 	  $(document).on("keydown", this.updatePosition.bind(this));
-	  $(document).on("click", this.pauseFn);
 	};
 	
 	Game.prototype.updateScore = function(numOfBubbles){
@@ -216,12 +209,12 @@
 	        this.currentBubble.setAutoFall();
 	        break;
 	      case 37: 
-	        if (col >= 1 && posY < (750 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
+	        if (col >= 1 && posY < (730 - ((this.grid[col - 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
 	          this.currentBubble.col--;
 	        }
 	        break;
 	      case 39:
-	        if (col <= 6 && posY < (750 - ((this.grid[col + 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
+	        if (col <= 6 && posY < (730 - ((this.grid[col + 1].indexOf(undefined) + 1) * 60 + 30 + 30))){
 	          this.currentBubble.col++;
 	        }
 	        break;
@@ -244,7 +237,7 @@
 	  numOfBubblesInCol = currentCol.reduce(function(a, b){
 	                                    return a + (!!b ? 1 : 0);
 	                                  }, 0);
-	  if (this.currentBubble.pos_y >= (750 - (numOfBubblesInCol * 60 + 30 + 30))){ 
+	  if (this.currentBubble.pos_y >= (730 - (numOfBubblesInCol * 60 + 30 + 30))){ 
 	    this.grid[bubbleCol][numOfBubblesInCol] = this.currentBubble;
 	    this.colSums[bubbleCol] += this.currentBubble.value; 
 	    this.currentBubble = this.addBubble();
@@ -260,10 +253,10 @@
 	    for (var j = 0; j < currentCol.length; j++){
 	      if (!currentCol[j]) continue;
 	      var currentBubble = currentCol[j];
-	      if (currentBubble.pos_y < (750 - (j * 60 + 30 + 30))){
+	      if (currentBubble.pos_y < (730 - (j * 60 + 30 + 30))){
 	          currentBubble.fall();
-	      } else if (currentBubble.pos_y >  (750 - (j * 60 + 60))){  
-	        currentBubble.pos_y = 750 - (j * 60 + 60);
+	      } else if (currentBubble.pos_y >  (730 - (j * 60 + 60))){  
+	        currentBubble.pos_y = 730 - (j * 60 + 60);
 	      }
 	    }
 	  }
@@ -466,7 +459,8 @@
 	module.exports = Bubble;
 
 /***/ },
-/* 4 */
+/* 4 */,
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -476,25 +470,25 @@
 		  this.ctx.fillText("PrimeOrdeal", 40, 60);
 		  this.ctx.font = "24px Lato";
 		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText("Score", 24, 280);
+		  this.ctx.fillText("Score", 24, 260);
 		  this.ctx.font = "24px Lato";
 		  this.ctx.fillStyle = "black";
 		  var textWidth = this.ctx.measureText(this.score).width;
-		  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 320);
+		  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 300);
 		  this.ctx.font = "20px Lato";
 		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText("Turns Left", 14, 520);
+		  this.ctx.fillText("Turns Left", 14, 500);
 		  this.ctx.font = "24px Lato";
 		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText(7 - this.turns, 44, 560);
+		  this.ctx.fillText(7 - this.turns, 44, 540);
 		},
 		drawFrame: function(){
 			this.ctx.beginPath();
 		  this.ctx.lineWidth = 4;
-		  this.ctx.moveTo(118, 120);
-		  this.ctx.lineTo(118, 722);
-		  this.ctx.lineTo(602, 722);
-		  this.ctx.lineTo(602, 120);
+		  this.ctx.moveTo(118, 100);
+		  this.ctx.lineTo(118, 702);
+		  this.ctx.lineTo(602, 702);
+		  this.ctx.lineTo(602, 100);
 		  this.ctx.strokeStyle = "black";
 		  this.ctx.stroke();
 		  this.ctx.lineWidth = 2;
