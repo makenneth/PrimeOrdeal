@@ -2,9 +2,13 @@ var Game = require('./game.js');
 
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(ctx, this.changePage.bind(this, 1)); //I could set difficulties, which takes in # of bubble to start with
+  this.game = new Game(ctx, this.changePage.bind(this, 1), this.pause.bind(this)); //I could set difficulties, which takes in # of bubble to start with
   this.page = 1;
+  this.pause = false;
   this.setUpListeners();
+};
+View.prototype.pause = function(){
+	this.pause = this.pause ? false : true;
 };
 
 View.prototype.setUpListeners = function(){
@@ -23,7 +27,7 @@ View.prototype.setUpListeners = function(){
 View.prototype.changePage = function(page, e){
 	this.page = page;
 	if (e.target.id === "retry" || e.target.id ==="back-icon"){
-		this.game = new Game(this.ctx, this.changePage.bind(this, 1)); 
+		this.game = new Game(this.ctx, this.changePage.bind(this, 1));
 	}
 	switch (page){
 		case 3:
@@ -73,10 +77,8 @@ View.prototype.start = function() {
 
 View.prototype.gameScreen = function(intId){
 		this.game.draw();
-    this.game.moveBubble();
+    this.game.moveBubbles();
     this.hasWon(intId);
-
-
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
