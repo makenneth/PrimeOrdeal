@@ -7,42 +7,54 @@
 	<script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
 	<script src="./bundle.js"></script>
 	<link rel="stylesheet" type="text/css" href="./assets/css/application.css">
-
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<canvas width="640px" height="760px" id="canvas"></canvas>
 	<div style="display: none;">
-  <img id="source" src="./assets/images/marbles.png"
-       width="100" height="auto"/>
+	  <img id="source" src="./assets/images/marbles.png"
+	       width="100" height="auto" />
 	</div>
-	<img id="back-icon" src="./assets/images/arrow-back.png" width="50px" height="auto" class="hidden"/>
+	<img id="back-icon" src="./assets/images/arrow-back.png" width="50px" height="auto" class="hidden" />
+	<button id="instruction" data-toggle="modal" data-target="#myModal" class="hidden"></button>
 	<button id="start">Start Game</button>
-	<button id="instruction">Instructions</button>
 	<button id="retry" class="hidden">Retry</button>
-	<div id="instruction-text" class="hidden">
-		<p>Warning.. This game involves addition.</p>
-		<p>It is an ordeal of prime numbers!
-			 Bubble will keep falling from the sky.
-			 Your task is to clear balls as quickly as you can.
-			 You have seven turns to clear balls before more hidden balls fall from the sky!</p>
-		<ul>Controls:
-			<li>Use &larr; and &rarr; key to control the movement</li>
-			<li>Use spacebar to drop ball quickly</li>
-		</ul>
-		<ol>Rules:
-			<li>All the balls connected
-								to each other sum up to a prime will be cleared</li>
-			<li> - At least two or more balls must be in the chain</li>
-			<li>When there is a hidden ball in a column,
-								sum of prime in columns cannot be cleared</li>
-			<li> - Hidden ball has no effect on a row</li>
-			<li>Hidden ball can be revealed if any of its surrounding balls get cleared</li>
-		</ol>
-		<div class="examples">
-			<img src="./assets/images/example1.png">
-			<img src="./assets/images/example2.png">
-			<img src="./assets/images/example3.png">
-		</div>
+	<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Instructions</h4>
+        </div>
+        <div class="modal-body">
+					<p>It is an ordeal of prime numbers!
+						 Bubble will keep falling from the sky.
+						 Your task is to clear balls as quickly as you can.
+						 You have seven turns to clear balls before more hidden balls fall from the sky!</p>
+					<ul>Controls:
+						<li>Use &larr; and &rarr; key to control the movement</li>
+						<li>Use spacebar to drop ball quickly</li>
+					</ul>
+					<ol>Rules:
+						<li>All the balls connected
+											to each other sum up to a prime will be cleared</li>
+						<li> - At least two or more balls must be in the chain</li>
+						<li>When there is a hidden ball in a column,
+											sum of prime in columns cannot be cleared</li>
+						<li> - Hidden ball has no effect on a row</li>
+						<li>Hidden ball can be revealed if any of its surrounding balls get cleared</li>
+					</ol>
+					<div class="examples">
+						<img src="./assets/images/example1.png">
+						<img src="./assets/images/example2.png">
+						<img src="./assets/images/example3.png">
+					</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 	</div>
 
 	<div id="credit">

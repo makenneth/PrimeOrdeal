@@ -19,13 +19,19 @@ module.exports = {
 	},
 	drawFrame: function(){
 		this.ctx.beginPath();
-	  this.ctx.lineWidth = 4;
-	  this.ctx.moveTo(118, 100);
-	  this.ctx.lineTo(118, 702);
-	  this.ctx.lineTo(602, 702);
-	  this.ctx.lineTo(602, 100);
-	  this.ctx.strokeStyle = "black";
+	  this.ctx.lineWidth = 10;
+	  this.ctx.moveTo(116, 100);
+	  this.ctx.lineTo(116, 704);
+	  this.ctx.lineTo(606, 704);
+	  this.ctx.lineTo(606, 100);
+	  this.ctx.lineTo(111, 100);
+	  this.ctx.strokeStyle = "blue";
 	  this.ctx.stroke();
+	  this.ctx.globalAlpha = 0.8;
+	  this.ctx.fillStyle = "black";
+	  this.ctx.fill();
+	  this.ctx.closePath	();
+	  this.ctx.globalAlpha = 1;
 	  this.ctx.lineWidth = 2;
 	  this.ctx.fillStyle = "black";
 	}

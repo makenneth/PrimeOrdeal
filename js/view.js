@@ -2,12 +2,12 @@ var Game = require('./game.js');
 
 var View = function(ctx){
   this.ctx = ctx;
-  this.game = new Game(ctx, this.changePage.bind(this, 1), this.pause.bind(this)); //I could set difficulties, which takes in # of bubble to start with
+  this.game = new Game(ctx, this.changePage.bind(this, 1), this.togglePause.bind(this)); //I could set difficulties, which takes in # of bubble to start with
   this.page = 1;
   this.pause = false;
   this.setUpListeners();
 };
-View.prototype.pause = function(){
+View.prototype.togglePause = function(){
 	this.pause = this.pause ? false : true;
 };
 
@@ -16,13 +16,13 @@ View.prototype.setUpListeners = function(){
  	this.instructionBtn = document.getElementById("instruction"),
  	this.retryBtn = document.getElementById("retry"),
  	this.backIcon = document.getElementById("back-icon"),
- 	this.instructionText = document.getElementById("instruction-text");
  	this.backIcon.addEventListener("click", this.changePage.bind(this, 1));
   this.startBtn.addEventListener("click", this.changePage.bind(this, 2));
   this.retryBtn.addEventListener("click", this.changePage.bind(this, 1));
-  this.instructionBtn.addEventListener("click", this.changePage.bind(this, 3));
-};
 
+  $('#myModal').on("hidden.bs.modal", this.togglePause.bind(this));
+  $('#myModal').on("shown.bs.modal", this.togglePause.bind(this));
+};
 
 View.prototype.changePage = function(page, e){
 	this.page = page;
@@ -30,24 +30,16 @@ View.prototype.changePage = function(page, e){
 		this.game = new Game(this.ctx, this.changePage.bind(this, 1));
 	}
 	switch (page){
-		case 3:
-		  this.instructionText.className = "";
-			this.backIcon.className = "";
-			this.startBtn.className = "hidden";
-			this.instructionBtn.className = "hidden";
-			this.retryBtn.className = "hidden";
-			break;
 		case 2:
-			this.instructionText.className = "hidden";
+			this.instructionBtn.className = "";
 			this.backIcon.className = "";
 			this.startBtn.className = "hidden";
-			this.instructionBtn.className = "hidden";
 			this.retryBtn.className = "hidden";
+			$("#myModal").modal("show");
 			break;
 		case 1:
-			this.instructionText.className = "hidden";
 			this.startBtn.className = "";
-			this.instructionBtn.className = "";
+			this.instructionBtn.className = "hidden";
 			this.retryBtn.className = "hidden";
 			this.backIcon.className = "hidden";
 			break;
@@ -61,15 +53,14 @@ View.prototype.start = function() {
     			this.startScreen();
     			break;
     		case 2:
-    			this.gameScreen.call(this, intId);
-    			break;
-    		case 3:
-    			this.instructionScreen();
+    			if (!this.pause){
+	    			this.gameScreen.call(this, intId);
+    			}
     			break;
     		case 5:
-    		 this.loseScreen.call(this, intId);
-    		 this.retryBtn.className = "";
-	 			this.retryBtn.disabled = false;
+    		  this.loseScreen.call(this, intId);
+    		  this.retryBtn.className = "";
+	 				this.retryBtn.disabled = false;
     			break;
     	}
     }.bind(this), 20);

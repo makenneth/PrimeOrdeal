@@ -60,12 +60,12 @@
 	
 	var View = function(ctx){
 	  this.ctx = ctx;
-	  this.game = new Game(ctx, this.changePage.bind(this, 1), this.pause.bind(this)); //I could set difficulties, which takes in # of bubble to start with
+	  this.game = new Game(ctx, this.changePage.bind(this, 1), this.togglePause.bind(this)); //I could set difficulties, which takes in # of bubble to start with
 	  this.page = 1;
 	  this.pause = false;
 	  this.setUpListeners();
 	};
-	View.prototype.pause = function(){
+	View.prototype.togglePause = function(){
 		this.pause = this.pause ? false : true;
 	};
 	
@@ -74,13 +74,13 @@
 	 	this.instructionBtn = document.getElementById("instruction"),
 	 	this.retryBtn = document.getElementById("retry"),
 	 	this.backIcon = document.getElementById("back-icon"),
-	 	this.instructionText = document.getElementById("instruction-text");
 	 	this.backIcon.addEventListener("click", this.changePage.bind(this, 1));
 	  this.startBtn.addEventListener("click", this.changePage.bind(this, 2));
 	  this.retryBtn.addEventListener("click", this.changePage.bind(this, 1));
-	  this.instructionBtn.addEventListener("click", this.changePage.bind(this, 3));
-	};
 	
+	  $('#myModal').on("hidden.bs.modal", this.togglePause.bind(this));
+	  $('#myModal').on("shown.bs.modal", this.togglePause.bind(this));
+	};
 	
 	View.prototype.changePage = function(page, e){
 		this.page = page;
@@ -88,24 +88,16 @@
 			this.game = new Game(this.ctx, this.changePage.bind(this, 1));
 		}
 		switch (page){
-			case 3:
-			  this.instructionText.className = "";
-				this.backIcon.className = "";
-				this.startBtn.className = "hidden";
-				this.instructionBtn.className = "hidden";
-				this.retryBtn.className = "hidden";
-				break;
 			case 2:
-				this.instructionText.className = "hidden";
+				this.instructionBtn.className = "";
 				this.backIcon.className = "";
 				this.startBtn.className = "hidden";
-				this.instructionBtn.className = "hidden";
 				this.retryBtn.className = "hidden";
+				$("#myModal").modal("show");
 				break;
 			case 1:
-				this.instructionText.className = "hidden";
 				this.startBtn.className = "";
-				this.instructionBtn.className = "";
+				this.instructionBtn.className = "hidden";
 				this.retryBtn.className = "hidden";
 				this.backIcon.className = "hidden";
 				break;
@@ -119,15 +111,14 @@
 	    			this.startScreen();
 	    			break;
 	    		case 2:
-	    			this.gameScreen.call(this, intId);
-	    			break;
-	    		case 3:
-	    			this.instructionScreen();
+	    			if (!this.pause){
+		    			this.gameScreen.call(this, intId);
+	    			}
 	    			break;
 	    		case 5:
-	    		 this.loseScreen.call(this, intId);
-	    		 this.retryBtn.className = "";
-		 			this.retryBtn.disabled = false;
+	    		  this.loseScreen.call(this, intId);
+	    		  this.retryBtn.className = "";
+		 				this.retryBtn.disabled = false;
 	    			break;
 	    	}
 	    }.bind(this), 20);
@@ -500,13 +491,19 @@
 		},
 		drawFrame: function(){
 			this.ctx.beginPath();
-		  this.ctx.lineWidth = 4;
-		  this.ctx.moveTo(118, 100);
-		  this.ctx.lineTo(118, 702);
-		  this.ctx.lineTo(602, 702);
-		  this.ctx.lineTo(602, 100);
-		  this.ctx.strokeStyle = "black";
+		  this.ctx.lineWidth = 10;
+		  this.ctx.moveTo(116, 100);
+		  this.ctx.lineTo(116, 704);
+		  this.ctx.lineTo(606, 704);
+		  this.ctx.lineTo(606, 100);
+		  this.ctx.lineTo(111, 100);
+		  this.ctx.strokeStyle = "blue";
 		  this.ctx.stroke();
+		  this.ctx.globalAlpha = 0.8;
+		  this.ctx.fillStyle = "black";
+		  this.ctx.fill();
+		  this.ctx.closePath	();
+		  this.ctx.globalAlpha = 1;
 		  this.ctx.lineWidth = 2;
 		  this.ctx.fillStyle = "black";
 		}
