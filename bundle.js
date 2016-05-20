@@ -131,7 +131,7 @@
 	};
 	View.prototype.startScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
-		this.ctx.font = "64px Handlee";
+		this.ctx.font = "64px Exo";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("PrimeOrdeal", 150, 300);
 	}
@@ -148,13 +148,13 @@
 	};
 	View.prototype.loseScreen = function(){
 		this.ctx.clearRect(0, 0, 640, 800);
-	  this.ctx.font = "36px Lato";
+	  this.ctx.font = "36px Exo";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("YOU LOST!", 140, 140);
-		this.ctx.font = "36px Lato";
+		this.ctx.font = "36px Exo";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText("Your score was:", 140, 340);
-		this.ctx.font = "36px Lato";
+		this.ctx.font = "36px Exo";
 		this.ctx.fillStyle = "black";
 		this.ctx.fillText(this.game.score, 140, 380);
 	};
@@ -401,7 +401,7 @@
 	var Bubble = function(ctx, col, speed, value, autoFall, hidden){
 	  this.ctx = ctx;
 	  this.size = 30;
-	  this.pos_y = 0;
+	  this.pos_y = 130;
 	  this.col = col;
 	  this.speed = speed;
 	  this.value = value;
@@ -472,22 +472,19 @@
 
 	module.exports = {
 		drawText: function(){
-			this.ctx.font = "36px Lato";
+			this.ctx.font = "36px Exo";
 		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText("PrimeOrdeal", 40, 60);
-		  this.ctx.font = "24px Lato";
-		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText("Score", 24, 260);
-		  this.ctx.font = "24px Lato";
-		  this.ctx.fillStyle = "black";
+		  this.ctx.fillText("PrimeOrdeal", 220, 60);
+		  this.ctx.font = "24px Exo";
+		  this.ctx.fillText("Score", 24, 300);
+		  this.ctx.font = "24px Exo";
 		  var textWidth = this.ctx.measureText(this.score).width;
-		  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 300);
-		  this.ctx.font = "20px Lato";
-		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText("Turns Left", 14, 500);
-		  this.ctx.font = "24px Lato";
-		  this.ctx.fillStyle = "black";
-		  this.ctx.fillText(7 - this.turns, 44, 540);
+		  this.ctx.fillText(this.score, textWidth + 48 - 1.3 * textWidth, 340);
+		  this.ctx.font = "24px Exo";
+		  this.ctx.fillText("Turns", 22, 460);
+		  this.ctx.fillText("left", 32, 490);
+		  this.ctx.font = "24px Exo";
+		  this.ctx.fillText(7 - this.turns, 44, 530);
 		},
 		drawFrame: function(){
 			this.ctx.beginPath();
@@ -497,10 +494,10 @@
 		  this.ctx.lineTo(606, 704);
 		  this.ctx.lineTo(606, 100);
 		  this.ctx.lineTo(111, 100);
-		  this.ctx.strokeStyle = "blue";
+		  this.ctx.strokeStyle = "#00203c";
 		  this.ctx.stroke();
 		  this.ctx.globalAlpha = 0.8;
-		  this.ctx.fillStyle = "black";
+		  this.ctx.fillStyle = "#00060b";
 		  this.ctx.fill();
 		  this.ctx.closePath	();
 		  this.ctx.globalAlpha = 1;

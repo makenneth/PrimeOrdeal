@@ -1,7 +1,7 @@
 var Bubble = function(ctx, col, speed, value, autoFall, hidden){
   this.ctx = ctx;
   this.size = 30;
-  this.pos_y = 0;
+  this.pos_y = 130;
   this.col = col;
   this.speed = speed;
   this.value = value;

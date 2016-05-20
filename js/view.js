@@ -73,7 +73,7 @@ View.prototype.gameScreen = function(intId){
 };
 View.prototype.startScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
-	this.ctx.font = "64px Handlee";
+	this.ctx.font = "64px Exo";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("PrimeOrdeal", 150, 300);
 }
@@ -90,13 +90,13 @@ View.prototype.hasWon = function() {
 };
 View.prototype.loseScreen = function(){
 	this.ctx.clearRect(0, 0, 640, 800);
-  this.ctx.font = "36px Lato";
+  this.ctx.font = "36px Exo";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("YOU LOST!", 140, 140);
-	this.ctx.font = "36px Lato";
+	this.ctx.font = "36px Exo";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText("Your score was:", 140, 340);
-	this.ctx.font = "36px Lato";
+	this.ctx.font = "36px Exo";
 	this.ctx.fillStyle = "black";
 	this.ctx.fillText(this.game.score, 140, 380);
 };
