@@ -11,16 +11,22 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<canvas width="640px" height="760px" id="canvas"></canvas>
-	<div style="display: none;">
-	  <img id="source" src="./assets/images/marbles.png"
-	       width="100" height="auto" />
-	</div>
-	<img id="back-icon" src="./assets/images/arrow-back.png" width="40px" height="auto" class="hidden" />
-	<button id="instruction" data-toggle="modal" data-target="#myModal" class="hidden"></button>
-	<button id="start">Start Game</button>
-	<button id="retry" class="hidden">Retry</button>
-	<div class="modal fade" id="myModal" role="dialog">
+  <div class="game-container">
+  	<canvas width="640px" height="760px" id="canvas"></canvas>
+  	<div style="display: none;">
+  	  <img id="source" src="./assets/images/marbles.png"
+  	       width="100" height="auto" />
+  	</div>
+  	<img id="back-icon" src="./assets/images/arrow-back.png" width="40px" height="auto" class="hidden" />
+  	<button id="instruction" data-toggle="modal" data-target="#myModal" class="hidden"></button>
+  	<button id="start">Start Game</button>
+  	<button id="retry" class="hidden">Retry</button>
+
+  	<div id="credit">
+  		<a href="https://github.com/makenneth/PrimeOrdeal"><img class="git" src="./assets/images/github.png" width="50px" height"50px"/><img class="git-hover" src="./assets/images/github-hover.png" width="50px" height="50px"/></a>
+  	</div>
+  </div>
+  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -28,37 +34,32 @@
           <h4 class="modal-title">Instructions</h4>
         </div>
         <div class="modal-body">
-					<p>It is an ordeal of prime numbers!
-						 Bubble will keep falling from the sky.
-						 Your task is to clear balls as quickly as you can.
-						 You have seven turns to clear balls before more hidden balls fall from the sky!</p>
-					<ul>Controls:
-						<li>Use &larr; and &rarr; key to control the movement</li>
-						<li>Use spacebar to drop ball quickly</li>
-					</ul>
-					<ol>Rules:
-						<li>All the balls connected
-											to each other sum up to a prime will be cleared</li>
-						<li> - At least two or more balls must be in the chain</li>
-						<li>When there is a hidden ball in a column,
-											sum of prime in columns cannot be cleared</li>
-						<li> - Hidden ball has no effect on a row</li>
-						<li>Hidden ball can be revealed if any of its surrounding balls get cleared</li>
-					</ol>
-					<div class="examples">
-						<img src="./assets/images/example1.png">
-						<img src="./assets/images/example2.png">
-						<img src="./assets/images/example3.png">
-					</div>
+          <p>It is an ordeal of prime numbers!
+             Bubble will keep falling from the sky.
+             Your task is to clear balls as quickly as you can.
+             You have seven turns to clear balls before more hidden balls fall from the sky!</p>
+          <ul>Controls:
+            <li>Use &larr; and &rarr; key to control the movement</li>
+            <li>Use spacebar to drop ball quickly</li>
+          </ul>
+          <ol>Rules:
+            <li>All the balls connected
+                      to each other sum up to a prime will be cleared</li>
+            <li> - At least two or more balls must be in the chain</li>
+            <li>When there is a hidden ball in a column,
+                      sum of prime in columns cannot be cleared</li>
+            <li> - Hidden ball has no effect on a row</li>
+            <li>Hidden ball can be revealed if any of its surrounding balls get cleared</li>
+          </ol>
+          <div class="examples">
+            <img src="./assets/images/example1.png">
+            <img src="./assets/images/example2.png">
+            <img src="./assets/images/example3.png">
+          </div>
         </div>
       </div>
-      
+
     </div>
   </div>
-	</div>
-
-	<div id="credit">
-		<a href="https://github.com/makenneth/PrimeOrdeal"><img class="git" src="./assets/images/github.png" width="50px" height"50px"/><img class="git-hover" src="./assets/images/github-hover.png" width="50px" height="50px"/></a>
-	</div>
 </body>
 </html>
